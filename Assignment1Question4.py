@@ -52,6 +52,7 @@ plt.show()
 for i in range(n):
     plt.matshow(canvas,fignum = False)
     plt.pause(0.25)
+    plt.savefig("A1Q4_iteration_"+str(i)+".png")
     canvas = iteration(canvas)
 
 plt.ioff()
