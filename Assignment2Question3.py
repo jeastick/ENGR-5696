@@ -93,20 +93,31 @@ for i in range(len(y)):
     analytical_solution[i]=Y_y_exact(Lambda,H,y[i]) 
     print("i = " + str(i) + " y[i] = " + str(y[i]) + " Num = " + str(numerical_solution[i]) + "     Ana = " + str(analytical_solution[i]))
 
-print(numerical_solution)
-print(analytical_solution)
+# print(numerical_solution)
+# print(analytical_solution)
 
-print(numerical_solution-analytical_solution)
+# print(numerical_solution-analytical_solution)
 
 fig, ax = plt.subplots()
 ax.plot(numerical_solution,y)
+
+numtitle = 'Numerical Solution of Y(y) with H = ' + str(H)
+title = 'Y(y) with H = ' + str(H)
+ax.set(xlabel='Y(y)_numerical', ylabel='y',
+       title=numtitle)
+ax.grid()
+fig.savefig("A2Q3_Numerical_Solution.png")
+
+
+
+fig,ax = plt.subplots()
 ax.plot(analytical_solution,y)
 
-title = 'Y(y) with H = ' + str(H)
-ax.set(xlabel='Y(y)', ylabel='y',
-       title=title)
+anatitle = 'Analytical Solution of Y(y) with H = ' + str(H)
+ax.set(xlabel='Y(y)_analytical', ylabel='y',
+       title=anatitle)
 ax.grid()
 
-fig.savefig("A2Q3.png")
+fig.savefig("A2Q3_Analytical_Solution.png")
 plt.show()
 
