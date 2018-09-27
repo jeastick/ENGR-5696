@@ -16,30 +16,32 @@ def A_x_t(T_,k,x,w,t):
     return Axt
 
 def Y_y_series(n, a0, lam, H, y):
-    Yn = (H**(2*n)*lam**(2*n)*a0*y**(2*n))/((4**n)*m.factorial(2*n))
-    print("made it through Y_y_series")
+    y_star = y-H/2
+    y_sharp = 2*y_star/H
+    Yn = (H**(2*n)*lam**(2*n)*a0*y_sharp**(2*n))/((4**n)*m.factorial(2*n))
+    # print("made it through Y_y_series")
     return Yn
 
 def Y_y_numerical(iterations,a0,lam, H, y):
     Y_numerical = 0
     for i in range(iterations):
-        Yn = Y_y_series(i,ao,Lambda,H,y_bc)
+        Yn = Y_y_series(i,ao,Lambda,H,y)
         Y_numerical = Y_numerical + Yn
     return Y_numerical
 
 def Y_y_exact(lam,H,y):
     a = m.exp(lam*H)
     b = m.exp(-lam*H)
-    Yy = (1-(1-a)/(b-a))*a + ((1-a)/(b-a))*b
-    print("made it through Y_y_exact")
+    Yy = (1-(1-a)/(b-a))*m.exp(lam*y) + ((1-a)/(b-a))*m.exp(-lam*y)
+    # print("made it through Y_y_exact")
     return Yy
 
 
-L=1
+L=10
 k = 2*m.pi/L
 w = 1
 To = 1
-H = 10
+H = 5
 y_bc = 1
 
 Lambda = 1
@@ -57,12 +59,12 @@ Y1 = 1
 tolerance = 0.00000001
 converged = False
 N = 0
-Nmax = 100
+Nmax = 1000
 n = 10
 
 while converged == False and N < Nmax: 
 
-    Y_numerical = Y_y_numerical(n,ao,Lambda,H,y_bc) 
+    Y_numerical = Y_y_numerical(n,ao,Lambda,H,H) 
 
     error = (Y_numerical - y_bc)
 
@@ -79,21 +81,32 @@ while converged == False and N < Nmax:
 
 # Then we will have both a numerical and analytical solution for Y(y) which we can plot and compare
 
+resolution = 0.1
+y = np.arange(0.0,H+resolution,resolution)
 
+numerical_solution = np.zeros(len(y)) 
+analytical_solution =np.zeros(len(y))
 
-# y = np.arange(0.0,10.0,0.01)
+for i in range(len(y)):
+    print(y[i])
+    numerical_solution[i]=Y_y_numerical(n,ao,Lambda,H,y[i])
+    analytical_solution[i]=Y_y_exact(Lambda,H,y[i]) 
+    print("i = " + str(i) + " y[i] = " + str(y[i]) + " Num = " + str(numerical_solution[i]) + "     Ana = " + str(analytical_solution[i]))
 
-# # numerical_solution = Y_y_numerical(n,ao,Lambda,H,y)
-# # analytical_solution = Y_y_exact(Lambda,H,y)
+print(numerical_solution)
+print(analytical_solution)
 
-# fig, ax = plt.subplots()
-# ax.plot(y, Y_y_numerical(n,ao,Lambda,H,y))
-# ax.plot(y, Y_y_exact(Lambda,H,y))
+print(numerical_solution-analytical_solution)
 
-# ax.set(xlabel='y', ylabel='Y(y)',
-#        title='Comparison')
-# ax.grid()
+fig, ax = plt.subplots()
+ax.plot(numerical_solution,y)
+ax.plot(analytical_solution,y)
 
-# fig.savefig("test.png")
-# plt.show()
+title = 'Y(y) with H = ' + str(H)
+ax.set(xlabel='Y(y)', ylabel='y',
+       title=title)
+ax.grid()
+
+fig.savefig("A2Q3.png")
+plt.show()
 
