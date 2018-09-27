@@ -19,7 +19,6 @@ def Y_y_series(n, a0, lam, H, y):
     y_star = y-H/2
     y_sharp = 2*y_star/H
     Yn = (H**(2*n)*lam**(2*n)*a0*y_sharp**(2*n))/((4**n)*m.factorial(2*n))
-    # print("made it through Y_y_series")
     return Yn
 
 def Y_y_numerical(iterations,a0,lam, H, y):
@@ -33,7 +32,6 @@ def Y_y_exact(lam,H,y):
     a = m.exp(lam*H)
     b = m.exp(-lam*H)
     Yy = (1-(1-a)/(b-a))*m.exp(lam*y) + ((1-a)/(b-a))*m.exp(-lam*y)
-    # print("made it through Y_y_exact")
     return Yy
 
 
@@ -43,19 +41,13 @@ w = 1
 To = 1
 H = 5
 y_bc = 1
-
 Lambda = 1
 
-testyyexact = Y_y_exact(Lambda,H,y_bc)
-print ("Y_y_exact: " + str(testyyexact))
 
-# First we solve for a_0 using the boundary condition Y(1) = 1, using n iterations
-
-
-
+# First we solve for a_0 using the boundary condition Y(0)=Y(H)=1, using n iterations
 
 ao = 1 # initial guess for ao
-Y1 = 1 
+
 tolerance = 0.00000001
 converged = False
 N = 0
@@ -69,11 +61,11 @@ while converged == False and N < Nmax:
     error = (Y_numerical - y_bc)
 
     if abs(error) < tolerance:
-        print ("Solution for a_o has converged!: Y_(1) = " +str(Y_numerical) + " when ao = " + str(ao))
+        print ("Solution for a_o has converged!: Y_(H) = " +str(Y_numerical) + " when ao = " + str(ao))
         converged = True
     else:
         ao = ao - 0.01*error
-        print ("new ao is " + str(ao))
+        # print ("new ao is " + str(ao)) #tracer
         N+=1
 
 
@@ -88,15 +80,10 @@ numerical_solution = np.zeros(len(y))
 analytical_solution =np.zeros(len(y))
 
 for i in range(len(y)):
-    print(y[i])
     numerical_solution[i]=Y_y_numerical(n,ao,Lambda,H,y[i])
     analytical_solution[i]=Y_y_exact(Lambda,H,y[i]) 
-    print("i = " + str(i) + " y[i] = " + str(y[i]) + " Num = " + str(numerical_solution[i]) + "     Ana = " + str(analytical_solution[i]))
+    #print("i = " + str(i) + " y[i] = " + str(y[i]) + " Num = " + str(numerical_solution[i]) + "     Ana = " + str(analytical_solution[i])) #tracer
 
-# print(numerical_solution)
-# print(analytical_solution)
-
-# print(numerical_solution-analytical_solution)
 
 fig, ax = plt.subplots()
 ax.plot(numerical_solution,y)
