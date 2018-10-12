@@ -3,19 +3,27 @@ import math as m
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy.integrate as integrate
-
+import scipy.io.wavfile
 
 #### GLOBAL VARIABLES ####
 T = 444           # Tension of material (Newtons)
 mu = 8050          # Density of material (kg/m3)
-yp = 0.005          # Height of "pluck" from neutral axis (m)
-xp = 4           # Location of "pluck" along string (m)
+yp = 0.01          # Height of "pluck" from neutral axis (m)
+xp = 0.75           # Location of "pluck" along string (m)
 v = (T*mu)**(0.5)
-L = 10              # Period (string length) (m)
+L = 1              # Period (string length) (m)
 l = L/2            # Half Period (m)
 
-x_res = 500 # resolution of x
+pup = 0.75         # sound pickup location (m)
 
+x_res = 501     # resolution of x
+
+f_res = 44100        # time sampling frequency (Hz)
+t_res = 1/f_res     # time step (s)
+
+sampletime = 0.1 #total length of sample to take (s)
+
+t_steps = int(sampletime*f_res)         # number of time samples
 
 def y0(x):
     if(x<=xp):
@@ -64,24 +72,30 @@ for i in range(len(x_range)):
 
 
 
-t_range = np.linspace(0,1,num=10)
+t_range = np.arange(0,t_res*t_steps,t_res)
+soundwave = np.zeros(t_steps,dtype = np.float32)
 
-
+print("t_range is: " + str(t_range))
 
 for t_step in range(len(t_range)):
     yxt = np.zeros(len(x_range))
     for i in range(len(x_range)):
         for n in range(len(bn)):
-            yxt[i] = yxt[i] + bn[n]*m.sin((n)*m.pi*x_range[i]/L)*m.cos((n)*m.pi*v*t_step/L)
+            yxt[i] = yxt[i] + bn[n]*m.sin((n)*m.pi*x_range[i]/L)*m.cos((n)*m.pi*v*t_range[t_step]/L)
+        # print("x_range i is" + str(x_range[i]))
+        if(x_range[i] == pup):
+            soundwave[t_step] = yxt[i]
     ax.plot(x_range,yxt)
     
+plt.show()
 
+print("Datatype for soundfile number is " + str(type(soundwave[2])))
 
+scipy.io.wavfile.write("wave1.wav", f_res, soundwave)
 
-
-# print("bn array is " + str(bn))
-
-print(y_init)
+print("soundwave is " + str(soundwave))
+fig2, ax = plt.subplots()
+ax.plot(t_range,soundwave)
 plt.show()
 
 
