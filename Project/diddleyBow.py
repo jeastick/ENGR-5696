@@ -6,22 +6,22 @@ import scipy.integrate as integrate
 import scipy.io.wavfile
 
 #### GLOBAL VARIABLES ####
-T = 444           # Tension of material (Newtons)
-mu = 8050          # Density of material (kg/m3)
+T = 100           # Tension of material (Newtons)
+mu = 8050          # Linear Density of material (kg/m)
 yp = 0.01          # Height of "pluck" from neutral axis (m)
 xp = 0.75           # Location of "pluck" along string (m)
 v = (T*mu)**(0.5)
 L = 1              # Period (string length) (m)
 l = L/2            # Half Period (m)
 
-pup = 0.75         # sound pickup location (m)
+pup = 0.5         # sound pickup location (m)
 
 x_res = 501     # resolution of x
 
 f_res = 44100        # time sampling frequency (Hz)
 t_res = 1/f_res     # time step (s)
 
-sampletime = 0.1 #total length of sample to take (s)
+sampletime = 0.01 #total length of sample to take (s)
 
 t_steps = int(sampletime*f_res)         # number of time samples
 
@@ -47,7 +47,7 @@ for i in range(len(x_range)):
 
 integrand = np.zeros(len(x_range))
 
-coefs = 5
+coefs = 7
 bn = np.zeros(coefs) #i'll calculate this many bn terms
 
 fig, ax = plt.subplots()
@@ -84,8 +84,9 @@ for t_step in range(len(t_range)):
             yxt[i] = yxt[i] + bn[n]*m.sin((n)*m.pi*x_range[i]/L)*m.cos((n)*m.pi*v*t_range[t_step]/L)
         # print("x_range i is" + str(x_range[i]))
         if(x_range[i] == pup):
-            soundwave[t_step] = yxt[i]
-    ax.plot(x_range,yxt)
+            soundwave[t_step] = yxt[i]*100
+    if(t_step < 50 and t_step%2==0):
+        ax.plot(x_range,yxt)
     
 plt.show()
 
