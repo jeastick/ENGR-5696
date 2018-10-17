@@ -5,10 +5,13 @@ import matplotlib.pyplot as plt
 import scipy.integrate as integrate
 import scipy.io.wavfile
 
+from mpl_toolkits.mplot3d import axes3d
+
 class bow:
 
-    def __init__(self,Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, SampleTime, Coefficients):
+    def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, SampleTime, Coefficients):
         #### GLOBAL VARIABLES ####
+        self.name = name
         self.T = Tension           # Tension of material (Newtons)
         self.mu = LinDens          # Linear Density of material (kg/m)
         self.yp = PluckHeight          # Height of "pluck" from neutral axis (m)
@@ -23,7 +26,7 @@ class bow:
 
         self.x_res = 501     # resolution of x
 
-        self.f_res = 2000        # time sampling frequency (Hz)
+        self.f_res = 44100        # time sampling frequency (Hz)
         self.t_res = 1/self.f_res     # time step (s)
 
         self.sampletime = SampleTime #total length of sample to take (s)
@@ -80,20 +83,27 @@ class bow:
 
         print("self.t_range is: " + str(self.t_range))
 
-        for t_step in range(len(self.t_range)):
-            yxt = np.zeros(len(self.x_range))
-            for i in range(len(self.x_range)):
+        # first x, second y, index is time_step
+
+        # self.yx = np.zeros(2, self.x_range)     
+        self.yxt = np.zeros((len(self.t_range),len(self.x_range)))   #fisrt row is t, second row is x
+        
+
+        for t_step in range(self.yxt.shape[0]):
+            yx = np.zeros(self.yxt.shape[1])
+            for i in range(self.yxt.shape[1]):
                 for n in range(len(self.bn)):
-                    yxt[i] = yxt[i] + self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)*m.cos((n)*m.pi*self.v*self.t_range[t_step]/self.L)
+                    yx[i] = yx[i] + self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)*m.cos((n)*m.pi*self.v*self.t_range[t_step]/self.L)
                 # print("self.x_range i is" + str(self.x_range[i]))
                 if(self.x_range[i] == self.pup):
-                    self.soundwave[t_step] = yxt[i]*100
+                    self.soundwave[t_step] = yx[i]*100
+                self.yxt[t_step,i] = yx[i]
+            # self.yxt[t_step] = yx
             # if(t_step < 300 and t_step%2==0):
                 # ax.plot(self.x_range,yxt)
-        
         # plt.show()
 
-        scipy.io.wavfile.write("wave1.wav", self.f_res, self.soundwave)
+        scipy.io.wavfile.write(str(self.name) + ".wav", self.f_res, self.soundwave)
 
 ## x_range and y_init
     def plot_y_init(self):
@@ -114,37 +124,52 @@ class bow:
         plt.show()
 
 # ## x_range and yxt over i time steps, skipping j time steps
-#     def plot_yxt(numSteps,skipSteps):
-#         fig, ax = plt.subplots()
+    def plot_yxt(self,numSteps,skipSteps):
+        fig, ax = plt.subplots()
+        counter = 0
+        for t_step in range(self.yxt.shape[0]):
+            if(skipSteps != 0 and counter < numSteps and t_step%skipSteps == 0):
+                ax.plot(self.x_range,self.yxt[t_step,])
+                counter += 1
+            elif(counter < numSteps and t_step%skipSteps == 0):
+                ax.plot(self.x_range,self.yxt[t_step,])
+                counter += 1   
+        plt.show()
 
-#         for t_step in range(len(self.t_range)):
-#             if(t_step < numSteps and t_step%skipSteps = 0):
-#             ax.plot(self.x_range,yxt)
-#         ax.plot(self.x_range,self.y00)
-#         plt.show()
 ## t_range and soundwave
-
     def plot_soundwave(self):
         fig, ax = plt.subplots()
         ax.plot(self.t_range,self.soundwave)
         plt.show()
 
-
-
-
-
-## animate?
-
-
 #MAIN
             # Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, SampleTime, Coefficients):
 
-bow1 = bow(80, 0.020, 0.01, 0.20, 1, 0.5, 0.1, 10)
-bow1.plot_y_init()
-bow1.plot_integrand()
-bow1.plot_y00()
-bow1.plot_soundwave()
+bow1 = bow("0.1",80, 0.010, 0.01, 0.20, 1, 0.1, 0.5, 10)
+# # bow1.plot_y_init()
+# # bow1.plot_integrand()
+# # bow1.plot_y00()
+# # bow1.plot_soundwave()
+# bow1.plot_yxt(20,1)
 
 
+
+
+bow1 = bow("0.3",80, 0.010, 0.01, 0.20, 1, 0.3, 0.5, 10)
+# bow1.plot_y_init()
+# bow1.plot_integrand()
+# bow1.plot_y00()
+# bow1.plot_soundwave()
+# bow1.plot_yxt(20,1)
+
+
+
+bow1 = bow("0.5",80, 0.010, 0.01, 0.20, 1, 0.5, 0.5, 10)
+# bow1.plot_y_init()
+# bow1.plot_integrand()
+# bow1.plot_y00()
+# bow1.plot_soundwave()
+# bow1.plot_yxt(20,1)
+# bow1.plot_yxt3D()
 
 
