@@ -29,9 +29,9 @@ class bow:
         self.v = (self.T/self.mu)**(0.5)
         self.l = self.L/2                           # Half Period (m)
 
-        self.x_res = 500                            # Resolution of x
+        self.x_res = 1234                            # Resolution of x
         self.pup = PickupLocation/100*self.L        # Sound pickup location (m)
-
+        self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
 
         self.f_res = 5000                           # Time sampling frequency (Hz)
         self.t_res = 1/self.f_res                   # Time step (s)
@@ -92,7 +92,7 @@ class bow:
             for i in range(self.yxt.shape[1]):
                 for n in range(len(self.bn)):
                     yx[i] = yx[i] + self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)*m.cos((n)*m.pi*self.v*self.t_range[t_step]/self.L)
-                if(self.x_range[i] == self.pup):
+                if(i == self.pup_x_range_index):
                     self.soundwave[t_step] = yx[i]*100
                 self.yxt[t_step,i] = yx[i]
 
@@ -103,21 +103,24 @@ class bow:
         fig, ax = plt.subplots()
         ax.plot(self.x_range,self.y_init)
         plt.title(str(self.name + ": exact value of y_init (boundary case)"))
-        plt.show()
+        plt.savefig(str(self.name + "_y_init.png"), bbox_inches='tight')
+        # plt.show()
 
 ## x_range and self.integrand
     def plot_integrand(self):
         fig, ax = plt.subplots()
         ax.plot(self.x_range,self.integrand)
         plt.title(str(self.name + ": Fourier integrand function for " + self.name))
-        plt.show()
+        plt.savefig(str(self.name + "_integrand.png"), bbox_inches='tight')
+        # plt.show()
 
 ## x_range and y00
     def plot_y00(self):
         fig, ax = plt.subplots()
         ax.plot(self.x_range,self.y00)
-        plt.title(str(self.name + ": Fourier series approximation of y_init"))        
-        plt.show()
+        plt.title(str(self.name + ": Fourier series approximation of y_init")) 
+        plt.savefig(str(self.name + "_y00.png"), bbox_inches='tight')
+        # plt.show()
 
     def get_bn(self):
         return self.bn
@@ -133,15 +136,17 @@ class bow:
             elif(counter < numSteps):
                 ax.plot(self.x_range,self.yxt[t_step,])
                 counter += 1   
-        plt.title(str(self.name + ": First and every other " + str(skipSteps) + " time steps of y(x,t) up to " + str(numSteps) + " steps"))        
-        plt.show()
+        plt.title(str(self.name + ": First and every other " + str(skipSteps) + " time steps of y(x,t) up to " + str(numSteps) + " steps"))
+        plt.savefig(str(self.name + "_yxt.png"), bbox_inches='tight')       
+        # plt.show()
 
 ## t_range and soundwave
     def plot_soundwave(self):
         fig, ax = plt.subplots()
         ax.plot(self.t_range,self.soundwave)
-        plt.title(str(self.name + ": Soundwave of string vibration with sound pick-up at x = " + str(self.pup)))        
-        plt.show()
+        plt.title(str(self.name + ": Soundwave of string vibration with sound pick-up at x = " + str(self.pup))) 
+        plt.savefig(str(self.name + "_wave.png"), bbox_inches='tight')
+        # plt.show()
 
 #MAIN
 
