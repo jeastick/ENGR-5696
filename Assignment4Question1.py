@@ -1,7 +1,7 @@
 # ENGR 5696
 # JEFF EASTICK
 # 2018/9/25
-# ASSIGNMENT 5 - QUESTION 1
+# ASSIGNMENT 4 - QUESTION 1
 
 import math as m
 import matplotlib
@@ -110,7 +110,7 @@ ax.set(xlabel='x', ylabel='f(x)',
        title=title)
 ax.grid()
 
-fig.savefig("A5Q1_Fourier_Plot.png")
+fig.savefig("A4Q1_Fourier_Plot.png")
 
 
 fig,ax = plt.subplots()
@@ -122,7 +122,7 @@ title2 = 'Relative error of Fourier Expansion vs. N'
 ax.set(xlabel='N', ylabel='Relative Error',
        title=title2)
 ax.grid()
-fig.savefig("A5Q1_Error_Plot.png")
+fig.savefig("A4Q1_Error_Plot.png")
 
 
 
