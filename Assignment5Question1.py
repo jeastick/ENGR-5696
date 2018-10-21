@@ -95,22 +95,36 @@ print(E_11)
 
 
 fig, ax = plt.subplots()
+fig.set_figheight(8.5)
+fig.set_figwidth(11)
 ax.plot(x_range,fx_exact)
 ax.plot(x_range,fx_fourier_1)
 ax.plot(x_range,fx_fourier_5)
 ax.plot(x_range,fx_fourier_7)
 ax.plot(x_range,fx_fourier_9)
 ax.plot(x_range,fx_fourier_11)
+ax.legend(('f(x)_exact','N=1','N=5,','N=7', 'N=9', 'N=11'),loc = 'right')
 
-fig2,ax = plt_subplots()
-ax.plot(error
-
-
-numtitle = 'f(x)'
-title = 'f(x)dsa'
+title = 'Fourier Series Expansion of f(x)'
 ax.set(xlabel='x', ylabel='f(x)',
-       title=numtitle)
+       title=title)
 ax.grid()
+
+fig.savefig("A5Q1_Fourier_Plot.png")
+
+
+fig,ax = plt.subplots()
+fig.set_figheight(8.5)
+fig.set_figwidth(11)
+ax.plot(error_N_vals,error_trend)
+
+title2 = 'Relative error of Fourier Expansion vs. N'
+ax.set(xlabel='N', ylabel='Relative Error',
+       title=title2)
+ax.grid()
+fig.savefig("A5Q1_Error_Plot.png")
+
+
 
 plt.show()
 
