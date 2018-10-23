@@ -35,7 +35,7 @@ class bow:
         self.pup = PickupLocation/100*self.L        # Sound pickup location (m)
         self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
 
-        self.f_res = 1000                          # Time sampling frequency (Hz)
+        self.f_res = 22000                          # Time sampling frequency (Hz)
         self.t_res = 1/self.f_res                   # Time step (s)
     
         self.sampletime = SampleTime                # Total length of sample to take (s)
