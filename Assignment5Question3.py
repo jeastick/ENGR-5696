@@ -8,9 +8,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+r = 0.75
 e = 1      #y
-h = 1      #z
+h = e*r      #z
 res = 100
 coefs = 100
 
@@ -43,14 +43,14 @@ utest = series_term(coefs,uy,uz)
 
 
 fig, ax = plt.subplots()
-plot = plt.contour(y,z,u,10)
+plot = plt.contour(y/e,z/h,u,10)
 plt.clabel(plot, inline=1, fontsize=10)
 
-plt.xlim(-e/2, e/2)
-plt.ylim(-h/2, h/2)
+plt.xlim(-0.5, 0.5)
+plt.ylim(-0.5, 0.5)
 
-plt.xlabel('y')
-plt.ylabel('z')
+plt.xlabel('y/e')
+plt.ylabel('z/h')
 plt.show()
 
 
