@@ -44,13 +44,13 @@ u_mag = (G*e**2/(8*mu))
 
 u = u_mag*(1-(2*uy/e)**2 + series_term(coefs,uy,uz))
 
-Q =  np.trapz(np.trapz(u,y),z)
+Q =  u_mag*np.trapz(np.trapz(u,y),z)
 Q_ = Q/u_mag
 Rhe = (h/e)/(1+(h/e))
 Q_rh = (Rhe)**4
 
 
-# print("Flow Rate Q = " + str(Q))
+print("Flow Rate Q = " + str(Q))
 print("Normalized flow rate Q_ = " + str(Q_))
 # print("(Rhe)^4 = " + str(Rhe**4))
 print("Flow Rate Qrh = " + str(Q_rh))
