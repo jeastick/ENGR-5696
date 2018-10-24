@@ -8,11 +8,14 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-r = 0.75
+
+r = 1
 e = 1      #y
 h = e*r      #z
 res = 100
-coefs = 100
+coefs = 50
+mu=1
+G=3
 
 pi = np.pi
 
@@ -37,13 +40,23 @@ print("z = " + str(z))
 
 uy, uz = np.meshgrid(y,z)
 
+u_mag = (G*e**2/(8*mu))
 
-u = (1-(2*uy/e)**2 + series_term(coefs,uy,uz))
-utest = series_term(coefs,uy,uz)
+u = u_mag*(1-(2*uy/e)**2 + series_term(coefs,uy,uz))
 
+Q =  np.trapz(np.trapz(u,y),z)
+Q_ = Q/u_mag
+Rhe = (h/e)/(1+(h/e))
+Q_rh = (Rhe)**4
+
+
+# print("Flow Rate Q = " + str(Q))
+print("Normalized flow rate Q_ = " + str(Q_))
+# print("(Rhe)^4 = " + str(Rhe**4))
+print("Flow Rate Qrh = " + str(Q_rh))
 
 fig, ax = plt.subplots()
-plot = plt.contour(y/e,z/h,u,10)
+plot = plt.contour(y/e,z/h,u/u_mag,10)
 plt.clabel(plot, inline=1, fontsize=10)
 
 plt.xlim(-0.5, 0.5)
