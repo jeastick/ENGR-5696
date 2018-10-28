@@ -134,6 +134,7 @@ plt.xlabel('r = h/e')
 plt.ylabel('Flow Rate')
 plt.title('Normalized Flow Rate vs. Cross Sectional Aspect Ratio')
 ax.legend(('Q_normal', 'Q_Rhe'),loc = 'right')
+plt.savefig("A5Q3_Flow_vs_R.png", bbox_inches='tight')
 plt.show()
 
 
