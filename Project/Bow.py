@@ -17,16 +17,18 @@ from mpl_toolkits.mplot3d import axes3d
 
 class bow:
 
-    def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, SampleTime, Coefficients):
+    def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, Fret, SampleTime, Coefficients):
         
         self.name = name
         print("Initializing bow object" + self.name + " ...")
         self.T = Tension                            # Tension of material (Newtons)
         self.mu = LinDens                           # Linear Density of material (kg/m)
         self.yp = PluckHeight                       # Height of "pluck" from neutral axis (m)
-        self.L = StringLength                       # Period (string length) (m)
+        self.fret = Fret
+        self.L = StringLength*(1-1/17.817)**self.fret                      # Period (string length) (m)
         self.xp = PluckLocation/100*self.L          # Location of "pluck" along string (m)
         self.coefs = Coefficients+1
+        self.amp = 100                              # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
 
         self.v = (self.T/self.mu)**(0.5)
         self.l = self.L/2                           # Half Period (m)
@@ -81,7 +83,7 @@ class bow:
 
         for i in range(len(self.x_range)):
             for n in range(len(self.bn)):
-                self.y00[i] = self.y00[i] + self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)
+                self.y00[i] += self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)
 
         print("Boundary condition y(x,t) at t = 0 has been calculated using the fourier coefficients bn")
 
@@ -98,7 +100,7 @@ class bow:
                 for n in range(len(self.bn)):
                     yx[i] = yx[i] + self.bn[n]*m.sin((n)*m.pi*self.x_range[i]/self.L)*m.cos((n)*m.pi*self.v*self.t_range[t_step]/self.L)
                 if(i == self.pup_x_range_index):
-                    self.soundwave[t_step] = yx[i]*100
+                    self.soundwave[t_step] = yx[i]*self.amp
                 self.yxt[t_step,i] = yx[i]
 
         print("y(x,t) has been generated.")
@@ -167,9 +169,9 @@ class bow:
 
 # We will create a few digital guitar and bass strings:
 
-t_global    = 1
-c_global    = 2
-pluck_height_global = 0.01 # m
+t_global    = 0.2
+c_global    = 4
+pluck_height_global = 0.002 # m
 
 L_guitar    = 0.640 # m
 L_bass      = 0.860 # m
@@ -182,7 +184,7 @@ mu_bass     = 0.016 # kg/m
 #               Name, Tension (N), LinDens (kg/m), PluckHeight (m), PluckLocation (% of L), StringLength (m) , PickupLocation (% of L), SampleTime (s), Coefficients (number):
 
 # Control Guitar
-Guitar1 = bow("Guitar1", 45, mu_guitar, pluck_height_global, 15, L_guitar, 20, t_global, c_global)
+Guitar1 = bow("Guitar1", 45, mu_guitar, pluck_height_global, 15, L_guitar, 20, 0, t_global, c_global)
 Guitar1.plot_y_init()
 Guitar1.plot_integrand()
 Guitar1.plot_y00()
@@ -191,7 +193,7 @@ Guitar1.plot_yxt(10,0)
 gc.collect()
 
 # Change the pluck location for Guitar2:
-Guitar2 = bow("Guitar2", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, t_global, c_global)
+Guitar2 = bow("Guitar2", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 12, t_global, c_global)
 Guitar2.plot_y_init()
 Guitar2.plot_integrand()
 Guitar2.plot_y00()
@@ -200,7 +202,7 @@ Guitar2.plot_yxt(10,0)
 gc.collect()
 
 # Change the pick-up location for Guitar3:
-Guitar3 = bow("Guitar3", 45, mu_guitar, pluck_height_global, 15, L_guitar, 40, t_global, c_global)
+Guitar3 = bow("Guitar3", 45, mu_guitar, pluck_height_global, 15, L_guitar, 40, 0, t_global, c_global)
 Guitar3.plot_y_init()
 Guitar3.plot_integrand()
 Guitar3.plot_y00()
@@ -209,7 +211,7 @@ Guitar3.plot_yxt(10,0)
 gc.collect()
 
 # Control Bass
-Bass1 = bow("Bass1", 100, mu_bass, pluck_height_global, 15, L_bass, 20, t_global, c_global)
+Bass1 = bow("Bass1", 100, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
 Bass1.plot_y_init()
 Bass1.plot_integrand()
 Bass1.plot_y00()
@@ -218,7 +220,7 @@ Bass1.plot_yxt(10,0)
 gc.collect()
 
 # Change the tension for Bass2:
-Bass2 = bow("Bass2", 130, mu_bass, pluck_height_global, 15, L_bass, 20, t_global, c_global)
+Bass2 = bow("Bass2", 130, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
 Bass2.plot_y_init()
 Bass2.plot_integrand()
 Bass2.plot_y00()
@@ -227,7 +229,7 @@ Bass2.plot_yxt(10,0)
 gc.collect()
 
 # Change the string density for Bass3 by + 15%:
-Bass3 = bow("Bass3", 100, mu_bass*1.15, pluck_height_global, 15, L_bass, 20, t_global, c_global)
+Bass3 = bow("Bass3", 100, mu_bass*1.15, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
 Bass3.plot_y_init()
 Bass3.plot_integrand()
 Bass3.plot_y00()
