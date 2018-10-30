@@ -22,6 +22,7 @@ class bow:
     def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, Fret, SampleTime, Coefficients):
         
         self.name = name
+        print("-----------------START " + self.name + "---------------------")
         print(self.name + ": Initializing bow object.")
         self.T = Tension                            # Tension of material (Newtons)
         self.mu = LinDens                           # Linear Density of material (kg/m)
@@ -47,6 +48,8 @@ class bow:
         self.t_steps = int(self.sampletime*self.f_res)         # Number of time samples
         print("Generating bow object...")
         self.generateBow()
+        print("-------------------END " + self.name + "---------------------")
+
 
     def y0(self,x):
         if(x<=self.xp):
@@ -215,18 +218,18 @@ class bow:
 # We will create a few digital guitar and bass strings:
 
 t_global    = 0.1
-c_global    = 14
+c_global    = 12
 
 pluck_height_global = 0.005 # m
 
-T_guitar    = 80   # N
+T_guitar    = 100   # N
 L_guitar    = 0.640 # m
 L_bass      = 0.860 # m
 mu_guitar   = 0.001 # kg/m
 mu_bass     = 0.016 # kg/m
 
 xlimlow  = 10
-xlimhigh = 22100
+xlimhigh = 22050
 
 # Relationships to show:
 
@@ -239,10 +242,10 @@ xlimhigh = 22100
 
 # TEST 1 - SHOW RELATIONSHIP BETWEEN TENSION AND FREQUENCY
 
-Test_1_String1 = bow("Test_1_String1", T_guitar    , mu_guitar, pluck_height_global, 20, L_guitar, 15, 0, t_global, c_global)
-Test_1_String2 = bow("Test_1_String2", T_guitar*1.2, mu_guitar, pluck_height_global, 20, L_guitar, 15, 0, t_global, c_global)
-Test_1_String3 = bow("Test_1_String3", T_guitar*1.4, mu_guitar, pluck_height_global, 20, L_guitar, 15, 0, t_global, c_global)
-Test_1_String4 = bow("Test_1_String4", T_guitar*1.6, mu_guitar, pluck_height_global, 20, L_guitar, 15, 0, t_global, c_global)
+Test_1_String1 = bow("Test_1_String1", T_guitar    , mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String2 = bow("Test_1_String2", T_guitar*1.2, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String3 = bow("Test_1_String3", T_guitar*1.4, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String4 = bow("Test_1_String4", T_guitar*1.6, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 
 Test_1_String1.plot_all()
 Test_1_String2.plot_all()
@@ -257,7 +260,9 @@ ax1.plot(Test_1_String1.frequencyRange,Test_1_String1.transform)
 ax1.plot(Test_1_String2.frequencyRange,Test_1_String2.transform)
 ax1.plot(Test_1_String3.frequencyRange,Test_1_String3.transform)
 ax1.plot(Test_1_String4.frequencyRange,Test_1_String4.transform)
-plt.xlim(xlimlow,xlimhigh)
+ax1.set_xlim(xlimlow,xlimhigh)
+ax1.set_ylim(0.00000001,pluck_height_global)
+ax1.set_yscale('log')
 ax1.set_xscale('log')
 plt.title(str("Test 1 - Relationship between tension and frequency"))
 ax1.legend(('String1', 'String2', 'String3', 'String4'),loc = 'right')
@@ -267,10 +272,10 @@ gc.collect()
 
 # # TEST 2 - SHOW RELATIONSHIP BETWEEN DENSITY AND FREQUENCY
 
-# Test_2_String1 = bow("Test_2_String1", 45, mu_guitar    , pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-# Test_2_String2 = bow("Test_2_String2", 45, mu_guitar*1.2, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-# Test_2_String3 = bow("Test_2_String3", 45, mu_guitar*1.4, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-# Test_2_String4 = bow("Test_2_String4", 45, mu_guitar*1.6, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+# Test_2_String1 = bow("Test_2_String1", T_guitar, mu_guitar    , pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+# Test_2_String2 = bow("Test_2_String2", T_guitar, mu_guitar*1.2, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+# Test_2_String3 = bow("Test_2_String3", T_guitar, mu_guitar*1.4, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+# Test_2_String4 = bow("Test_2_String4", T_guitar, mu_guitar*1.6, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 
 # Test_2_String1.plot_all()
 # Test_2_String2.plot_all()
@@ -295,10 +300,10 @@ gc.collect()
 
 # # TEST 3 - SHOW RELATIONSHIP BETWEEN LENGTH AND FREQUENCY
 
-# Test_3_String1 = bow("Test_3_String1", 45, mu_guitar, pluck_height_global, 50, L_guitar    , 50, 0, t_global, c_global)
-# Test_3_String2 = bow("Test_3_String2", 45, mu_guitar, pluck_height_global, 50, L_guitar*1.2, 50, 0, t_global, c_global)
-# Test_3_String3 = bow("Test_3_String3", 45, mu_guitar, pluck_height_global, 50, L_guitar*1.4, 50, 0, t_global, c_global)
-# Test_3_String4 = bow("Test_3_String4", 45, mu_guitar, pluck_height_global, 50, L_guitar*1.6, 50, 0, t_global, c_global)
+# Test_3_String1 = bow("Test_3_String1", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar    , 50, 0, t_global, c_global)
+# Test_3_String2 = bow("Test_3_String2", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar*1.2, 50, 0, t_global, c_global)
+# Test_3_String3 = bow("Test_3_String3", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar*1.4, 50, 0, t_global, c_global)
+# Test_3_String4 = bow("Test_3_String4", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar*1.6, 50, 0, t_global, c_global)
 
 # Test_3_String1.plot_all()
 # Test_3_String2.plot_all()
@@ -321,32 +326,58 @@ gc.collect()
 # gc.collect()
 
 
-# # TEST 3 - SHOW RELATIONSHIP BETWEEN HARMONICS AND PICKUP LOCATION
+# TEST 4 - SHOW RELATIONSHIP BETWEEN HARMONICS AND PICKUP LOCATION
 
-# Test_4_String1 = bow("Test_4_String1", 45, mu_guitar, pluck_height_global, 50, L_guitar, 20, 0, t_global, c_global)
-# Test_4_String2 = bow("Test_4_String2", 45, mu_guitar, pluck_height_global, 50, L_guitar, 30, 0, t_global, c_global)
-# Test_4_String3 = bow("Test_4_String3", 45, mu_guitar, pluck_height_global, 50, L_guitar, 40, 0, t_global, c_global)
-# Test_4_String4 = bow("Test_4_String4", 45, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 20, 0, t_global, c_global)
+Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 30, 0, t_global, c_global)
+Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 40, 0, t_global, c_global)
+Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
 
-# Test_4_String1.plot_all()
-# Test_4_String2.plot_all()
-# Test_4_String3.plot_all()
-# Test_4_String4.plot_all()
+Test_4_String1.plot_all()
+Test_4_String2.plot_all()
+Test_4_String3.plot_all()
+Test_4_String4.plot_all()
 
-# fig4, ax4 = plt.subplots()
-# fig4.set_figheight(10)
-# fig4.set_figwidth(10)
-# ax4.plot(Test_4_String1.frequencyRange,Test_4_String1.transform)
-# ax4.plot(Test_4_String2.frequencyRange,Test_4_String2.transform)
-# ax4.plot(Test_4_String3.frequencyRange,Test_4_String3.transform)
-# ax4.plot(Test_4_String4.frequencyRange,Test_4_String4.transform)
-# plt.xlim(xlimlow,xlimhigh)
-# ax4.set_xscale('log')
-# plt.title(str("Test 4 - Relationship between harmonics and pickup location"))
+fig4 = plt.figure()
+plt.title(str("Test 4 - Relationship between harmonics and pickup location"))
+plt.axis('off')
+
+ax41 = fig4.add_subplot(4,1,1)
+ax41.plot(Test_4_String1.frequencyRange,Test_4_String1.transform)
+ax41.set_xlim(xlimlow,xlimhigh)
+ax41.set_ylim(0.00000001,pluck_height_global)
+ax41.set_xscale('log')
+ax41.set_yscale('log')
+
+ax42 = fig4.add_subplot(4,1,2)
+ax42.plot(Test_4_String2.frequencyRange,Test_4_String2.transform)
+ax42.set_xlim(xlimlow,xlimhigh)
+ax42.set_ylim(0.00000001,pluck_height_global)
+ax42.set_xscale('log')
+ax42.set_yscale('log')
+
+ax43 = fig4.add_subplot(4,1,3)
+ax43.plot(Test_4_String3.frequencyRange,Test_4_String3.transform)
+ax43.set_xlim(xlimlow,xlimhigh)
+ax43.set_ylim(0.00000001,pluck_height_global)
+ax43.set_xscale('log')
+ax43.set_yscale('log')
+
+ax44 = fig4.add_subplot(4,1,4)
+ax44.plot(Test_4_String4.frequencyRange,Test_4_String4.transform)
+ax44.set_xlim(xlimlow,xlimhigh)
+ax44.set_ylim(0.00000001,pluck_height_global)
+ax44.set_xscale('log')
+ax44.set_yscale('log')
+
+fig4.set_figheight(10)
+fig4.set_figwidth(10)
+
+
 # ax4.legend(('String1', 'String2', 'String3', 'String4'),loc = 'right')
-# plt.savefig(str("Test4.png"), bbox_inches='tight')
-# plt.close()
-# gc.collect()
+plt.savefig(str("Test4.png"), bbox_inches='tight')
+plt.close()
+gc.collect()
 
 
 
