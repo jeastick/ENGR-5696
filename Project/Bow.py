@@ -22,7 +22,7 @@ class bow:
     def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, Fret, SampleTime, Coefficients):
         
         self.name = name
-        print("Initializing bow object" + self.name + " ...")
+        print(self.name + ": Initializing bow object.")
         self.T = Tension                            # Tension of material (Newtons)
         self.mu = LinDens                           # Linear Density of material (kg/m)
         self.yp = PluckHeight                       # Height of "pluck" from neutral axis (m)
@@ -30,7 +30,7 @@ class bow:
         self.L = StringLength*(1-1/17.817)**self.fret                      # Period (string length) (m)
         self.xp = PluckLocation/100*StringLength          # Location of "pluck" along string (m)
         self.coefs = Coefficients+1
-        self.amp = 100                              # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
+        self.amp = 1                              # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
 
         self.v = (self.T/self.mu)**(0.5)
         self.l = self.L/2                           # Half Period (m)
@@ -39,7 +39,7 @@ class bow:
         self.pup = PickupLocation/100*StringLength        # Sound pickup location (m)
         self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
 
-        self.f_res = 22000                          # Time sampling frequency (Hz)
+        self.f_res = 88200                          # Time sampling frequency (Hz)
         self.t_res = 1/self.f_res                   # Time step (s)
     
         self.sampletime = SampleTime                # Total length of sample to take (s)
@@ -91,9 +91,11 @@ class bow:
 
         self.t_range = np.arange(0,self.t_res*self.t_steps,self.t_res)
         self.soundwave = np.zeros(self.t_steps,dtype = np.float32)
+        # print("len(self.t_range) is: " + str(len(self.t_range)))
+        # print("len(self.soundwave) is: " + str(len(self.soundwave)))
+        # print("self.t_range.shape[0] is: " + str(self.t_range.shape[0]))
+        # print("self.soundwave.shape[0] is: " + str(self.t_range.shape[0]))
 
-        # print("self.t_range is: " + str(self.t_range))
-   
         self.yxt = np.zeros((len(self.t_range),len(self.x_range)))
 
         for t_step in range(self.yxt.shape[0]):
@@ -109,13 +111,13 @@ class bow:
 
         scipy.io.wavfile.write(str(self.name) + ".wav", self.f_res, self.soundwave)
 
-        self.frequencyRange = np.fft.fftfreq(len(self.soundwave), d = self.t_res)
-        self.frequencyRange = self.frequencyRange[range(int((round(len(self.soundwave)-0.5)/2)))]
-        self.transform = abs(np.fft.fft(self.soundwave))
-        self.transform = self.transform[range(int(round(len(self.soundwave)-0.5)/2))]
+        self.frequencyRange = np.fft.fftfreq(self.soundwave.shape[0], d = self.t_res)
+        self.frequencyRange = self.frequencyRange[range(int((round(self.soundwave.shape[0]))/2))]
+        self.transform = abs(np.fft.fft(self.soundwave)/self.soundwave.shape[0])
+        self.transform = self.transform[range(int(round(self.soundwave.shape[0])/2))]
 
         print(".wav file and FFT has been generated")
-        print("Bow generation complete for " + self.name)
+        print(self.name + " - Bow generation complete.")
 
 ## x_range and y_init
     def plot_y_init(self):
@@ -182,6 +184,12 @@ class bow:
         plt.close()
         # plt.show()
 
+    def plot_all(self):
+        self.plot_y_init()
+        self.plot_integrand()
+        self.plot_y00()
+        self.plot_soundwave()
+        self.plot_yxt(10,0)
 
     def get_bn(self):
         return self.bn
@@ -206,11 +214,11 @@ class bow:
 
 # We will create a few digital guitar and bass strings:
 
-t_global    = 0.2
-c_global    = 4
-pluck_height_global = 0.002 # m
+t_global    = 0.1
+c_global    = 10
+pluck_height_global = 0.005 # m
 
-L_guitar    = 0.640 # m
+L_guitar    = 1 # m
 L_bass      = 0.860 # m
 mu_guitar   = 0.001 # kg/m
 mu_bass     = 0.016 # kg/m
@@ -229,10 +237,16 @@ xlimhigh = 20000
 
 # TEST 1 - SHOW RELATIONSHIP BETWEEN TENSION AND FREQUENCY
 
-Test_1_String1 = bow("Test_1_String1", 45    , mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-Test_1_String2 = bow("Test_1_String2", 45*1.2, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-Test_1_String3 = bow("Test_1_String3", 45*1.4, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
-Test_1_String4 = bow("Test_1_String4", 45*1.6, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String1 = bow("Test_1_String1", 200    , mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String2 = bow("Test_1_String2", 200*1.2, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String3 = bow("Test_1_String3", 200*1.4, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+Test_1_String4 = bow("Test_1_String4", 200*1.6, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+
+Test_1_String1.plot_all()
+Test_1_String2.plot_all()
+Test_1_String3.plot_all()
+Test_1_String4.plot_all()
+
 
 fig1, ax1 = plt.subplots()
 fig1.set_figheight(10)
@@ -255,6 +269,11 @@ Test_2_String1 = bow("Test_2_String1", 45, mu_guitar    , pluck_height_global, 5
 Test_2_String2 = bow("Test_2_String2", 45, mu_guitar*1.2, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 Test_2_String3 = bow("Test_2_String3", 45, mu_guitar*1.4, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 Test_2_String4 = bow("Test_2_String4", 45, mu_guitar*1.6, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+
+Test_2_String1.plot_all()
+Test_2_String2.plot_all()
+Test_2_String3.plot_all()
+Test_2_String4.plot_all()
 
 fig2, ax2 = plt.subplots()
 fig2.set_figheight(10)
@@ -279,6 +298,11 @@ Test_3_String2 = bow("Test_3_String2", 45, mu_guitar, pluck_height_global, 50, L
 Test_3_String3 = bow("Test_3_String3", 45, mu_guitar, pluck_height_global, 50, L_guitar*1.4, 50, 0, t_global, c_global)
 Test_3_String4 = bow("Test_3_String4", 45, mu_guitar, pluck_height_global, 50, L_guitar*1.6, 50, 0, t_global, c_global)
 
+Test_3_String1.plot_all()
+Test_3_String2.plot_all()
+Test_3_String3.plot_all()
+Test_3_String4.plot_all()
+
 fig3, ax3 = plt.subplots()
 fig3.set_figheight(10)
 fig3.set_figwidth(10)
@@ -301,6 +325,11 @@ Test_4_String1 = bow("Test_4_String1", 45, mu_guitar, pluck_height_global, 50, L
 Test_4_String2 = bow("Test_4_String2", 45, mu_guitar, pluck_height_global, 50, L_guitar, 30, 0, t_global, c_global)
 Test_4_String3 = bow("Test_4_String3", 45, mu_guitar, pluck_height_global, 50, L_guitar, 40, 0, t_global, c_global)
 Test_4_String4 = bow("Test_4_String4", 45, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+
+Test_4_String1.plot_all()
+Test_4_String2.plot_all()
+Test_4_String3.plot_all()
+Test_4_String4.plot_all()
 
 fig4, ax4 = plt.subplots()
 fig4.set_figheight(10)
