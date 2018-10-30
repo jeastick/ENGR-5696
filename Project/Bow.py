@@ -13,6 +13,8 @@ import scipy.integrate as integrate
 import scipy.io.wavfile
 import gc
 
+
+
 from mpl_toolkits.mplot3d import axes3d
 
 class bow:
@@ -34,7 +36,7 @@ class bow:
         self.l = self.L/2                           # Half Period (m)
 
         self.x_res = 100                            # Resolution of x
-        self.pup = PickupLocation/100*self.L        # Sound pickup location (m)
+        self.pup = PickupLocation/100*StringLength        # Sound pickup location (m)
         self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
 
         self.f_res = 22000                          # Time sampling frequency (Hz)
@@ -106,7 +108,13 @@ class bow:
         print("y(x,t) has been generated.")
 
         scipy.io.wavfile.write(str(self.name) + ".wav", self.f_res, self.soundwave)
-        print(".wav file has been generated")
+
+        self.frequencyRange = np.fft.fftfreq(len(self.soundwave), d = self.t_res)
+        self.frequencyRange = frequencyRange[range(int((round(len(self.soundwave)-0.5)/2)))]
+        self.transform = abs(np.fft.fft(self.soundwave))
+        self.transform = self.transform[range(int(round(len(self.soundwave)-0.5)/2))]
+
+        print(".wav file and FFT has been generated")
         print("Bow generation complete for " + self.name)
 
 ## x_range and y_init
@@ -137,8 +145,8 @@ class bow:
         plt.close()
         # plt.show()
 
-    def get_bn(self):
-        return self.bn
+
+
 
 # ## x_range and yxt over i time steps, skipping j time steps
     def plot_yxt(self,numSteps,skipSteps):
@@ -155,8 +163,17 @@ class bow:
         plt.savefig(str(self.name + "_yxt.png"), bbox_inches='tight')       
         plt.close()
         # plt.show()
+        
+    def plot_fft(self):
+        fig, ax = plt.subplots()
+        ax.plot(frequencyRange,self.transform)
+        plt.xlim(1,20000)
+        ax.set_xscale('log')
+        plt.title(str(self.name + ": Discrete Fourier Transform"))
+        plt.savefig(str(self.name + "_FFT.png"), bbox_inches='tight')
+        plt.close()       
 
-## t_range and soundwave
+
     def plot_soundwave(self):
         fig, ax = plt.subplots()
         ax.plot(self.t_range,self.soundwave)
@@ -164,6 +181,26 @@ class bow:
         plt.savefig(str(self.name + "_wave.png"), bbox_inches='tight')
         plt.close()
         # plt.show()
+
+
+    def get_bn(self):
+        return self.bn
+
+    def soundwave(self):
+        return self.soundwave
+
+    def timeRange(self):
+        return self.t_range
+
+    def fft(self):
+        return self.transform
+
+    def freqRange(self):
+        return self.frequencyRange
+
+
+
+
 
 #MAIN
 
@@ -180,59 +217,92 @@ mu_bass     = 0.016 # kg/m
 
 
 
+# def __init__(self, name, Tension, LinDens, PluckHeight, PluckLocation, StringLength, PickupLocation, Fret, SampleTime, Coefficients):
 
-#               Name, Tension (N), LinDens (kg/m), PluckHeight (m), PluckLocation (% of L), StringLength (m) , PickupLocation (% of L), SampleTime (s), Coefficients (number):
 
 # Control Guitar
 Guitar1 = bow("Guitar1", 45, mu_guitar, pluck_height_global, 15, L_guitar, 20, 0, t_global, c_global)
+Guitar1.plot_fft()
 Guitar1.plot_y_init()
 Guitar1.plot_integrand()
 Guitar1.plot_y00()
 Guitar1.plot_soundwave()
 Guitar1.plot_yxt(10,0)
+
 gc.collect()
 
-# Change the pluck location for Guitar2:
-Guitar2 = bow("Guitar2", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 12, t_global, c_global)
-Guitar2.plot_y_init()
-Guitar2.plot_integrand()
-Guitar2.plot_y00()
-Guitar2.plot_soundwave()
-Guitar2.plot_yxt(10,0)
-gc.collect()
+# # Change the pluck location for Guitar2:
+# Guitar2 = bow("Guitar2", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 0, t_global, c_global)
+# Guitar2.plot_y_init()
+# Guitar2.plot_integrand()
+# Guitar2.plot_y00()
+# Guitar2.plot_soundwave()
+# Guitar2.plot_yxt(10,0)
+# gc.collect()
 
-# Change the pick-up location for Guitar3:
-Guitar3 = bow("Guitar3", 45, mu_guitar, pluck_height_global, 15, L_guitar, 40, 0, t_global, c_global)
-Guitar3.plot_y_init()
-Guitar3.plot_integrand()
-Guitar3.plot_y00()
-Guitar3.plot_soundwave()
-Guitar3.plot_yxt(10,0)
-gc.collect()
+# # Change the pick-up location for Guitar3:
+# Guitar3 = bow("Guitar3", 45, mu_guitar, pluck_height_global, 15, L_guitar, 40, 0, t_global, c_global)
+# Guitar3.plot_y_init()
+# Guitar3.plot_integrand()
+# Guitar3.plot_y00()
+# Guitar3.plot_soundwave()
+# Guitar3.plot_yxt(10,0)
+# gc.collect()
 
-# Control Bass
-Bass1 = bow("Bass1", 100, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
-Bass1.plot_y_init()
-Bass1.plot_integrand()
-Bass1.plot_y00()
-Bass1.plot_soundwave()
-Bass1.plot_yxt(10,0)
-gc.collect()
+# # Control Bass
+# Bass1 = bow("Bass1", 100, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
+# Bass1.plot_y_init()
+# Bass1.plot_integrand()
+# Bass1.plot_y00()
+# Bass1.plot_soundwave()
+# Bass1.plot_yxt(10,0)
+# gc.collect()
 
-# Change the tension for Bass2:
-Bass2 = bow("Bass2", 130, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
-Bass2.plot_y_init()
-Bass2.plot_integrand()
-Bass2.plot_y00()
-Bass2.plot_soundwave()
-Bass2.plot_yxt(10,0)
-gc.collect()
+# # Change the tension for Bass2:
+# Bass2 = bow("Bass2", 130, mu_bass, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
+# Bass2.plot_y_init()
+# Bass2.plot_integrand()
+# Bass2.plot_y00()
+# Bass2.plot_soundwave()
+# Bass2.plot_yxt(10,0)
+# gc.collect()
 
-# Change the string density for Bass3 by + 15%:
-Bass3 = bow("Bass3", 100, mu_bass*1.15, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
-Bass3.plot_y_init()
-Bass3.plot_integrand()
-Bass3.plot_y00()
-Bass3.plot_soundwave()
-Bass3.plot_yxt(10,0)
-gc.collect()
+# # Change the string density for Bass3 by + 15%:
+# Bass3 = bow("Bass3", 100, mu_bass*1.15, pluck_height_global, 15, L_bass, 20, 0, t_global, c_global)
+# Bass3.plot_y_init()
+# Bass3.plot_integrand()
+# Bass3.plot_y00()
+# Bass3.plot_soundwave()
+# Bass3.plot_yxt(10,0)
+# gc.collect()
+
+
+
+# Guitar4_0  = bow("Guitar4_0",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 0 , t_global, c_global)
+# gc.collect()
+# Guitar4_1  = bow("Guitar4_1",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 1 , t_global, c_global)
+# gc.collect()
+# Guitar4_2  = bow("Guitar4_2",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 2 , t_global, c_global)
+# gc.collect()
+# Guitar4_3  = bow("Guitar4_3",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 3 , t_global, c_global)
+# gc.collect()
+# Guitar4_4  = bow("Guitar4_4",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 4 , t_global, c_global)
+# gc.collect()
+# Guitar4_5  = bow("Guitar4_5",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 5 , t_global, c_global)
+# gc.collect()
+# Guitar4_6  = bow("Guitar4_6",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 6 , t_global, c_global)
+# gc.collect()
+# Guitar4_7  = bow("Guitar4_7",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 7 , t_global, c_global)
+# gc.collect()
+# Guitar4_8  = bow("Guitar4_8",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 8 , t_global, c_global)
+# gc.collect()
+# Guitar4_9  = bow("Guitar4_9",  45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 9 , t_global, c_global)
+# gc.collect()
+# Guitar4_10 = bow("Guitar4_10", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 10, t_global, c_global)
+# gc.collect()
+# Guitar4_11 = bow("Guitar4_11", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 11, t_global, c_global)
+# gc.collect()
+# Guitar4_12 = bow("Guitar4_12", 45, mu_guitar, pluck_height_global, 5, L_guitar, 20, 12, t_global, c_global)
+# gc.collect()
+
+# gc.collect()
