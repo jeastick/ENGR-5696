@@ -30,17 +30,18 @@ class bow:
         self.fret = Fret
         self.L = StringLength*(1-1/17.817)**self.fret                      # Period (string length) (m)
         self.xp = PluckLocation/100*StringLength          # Location of "pluck" along string (m)
-        self.coefs = Coefficients+1
+        self.coefs = Coefficients
         self.amp = 1                              # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
 
         self.v = (self.T/self.mu)**(0.5)
         self.l = self.L/2                           # Half Period (m)
+        self.fund = self.v/(2*self.L)
 
-        self.x_res = 100                            # Resolution of x
+        self.x_res = 1000                            # Resolution of x
         self.pup = PickupLocation/100*StringLength        # Sound pickup location (m)
         self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
 
-        self.f_res = 44100                          # Time sampling frequency (Hz)
+        self.f_res = 2200                          # Time sampling frequency (Hz)
         self.t_res = 1/self.f_res                   # Time step (s)
     
         self.sampletime = SampleTime                # Total length of sample to take (s)
@@ -55,10 +56,20 @@ class bow:
         if(x<=self.xp):
             return self.yp/self.xp*x
         if(x>self.xp):  
-            return (-self.yp/(self.L-self.xp))*x+self.yp+self.yp/(self.L-self.xp)*self.xp
+            return self.yp/(self.L-self.xp)*(self.L-x)
 
     def sin_term(self,n,x):
             return m.sin(n*m.pi*x/self.l)
+
+
+    def bn_exact(self,N):
+        return (2*self.yp/self.L/m.pi**2/N**2) * (  
+            (1/self.xp)           *(self.L*(self.L*(m.sin(m.pi*N*self.xp/self.L)                ) - m.pi*N*(self.xp       )*m.cos(m.pi*N*self.xp/self.L))) + 
+            (1/(self.L - self.xp))*(self.L*(self.L*(m.sin(m.pi*N*self.xp/self.L) - m.sin(m.pi*N)) + m.pi*N*(self.L-self.xp)*m.cos(m.pi*N*self.xp/self.L))))
+
+
+    # def yxt_exact(X,T,N):
+    #     TODO
 
     def generateBow(self):
 
@@ -73,14 +84,18 @@ class bow:
 
         self.integrand = np.zeros(len(self.x_range))
 
-        self.bn = np.zeros(self.coefs) 
+        self.bn = np.zeros(self.coefs+1) 
 
         for n in range(self.coefs):
+            n+=1
             print("Calculating " + str(self.coefs) + " fourier coefficients with n = " + str(n))
             for i in range(len(self.x_range)):
                 self.integrand[i] = self.y0(self.x_range[i])*m.sin(n*m.pi*self.x_range[i]/self.L)
-            self.bn[n] = 1/self.l*np.trapz(self.integrand,self.x_range)
-            print("b" + str(n) + " is " + str(self.bn[n]))
+            # self.bn[n] = 2/self.L*np.trapz(self.integrand,self.x_range)
+            
+            # print("b_approx_" + str(n) + " is " + str(self.bn[n]))
+            self.bn[n] = self.bn_exact(n)
+            print("b_exact_" + str(n) + " is " + str(self.bn[n]))
 
         print("Coefficients b_n have been calculated.")
 
@@ -92,6 +107,7 @@ class bow:
 
         print("Boundary condition y(x,t) at t = 0 has been calculated using the fourier coefficients bn")
 
+        self.plot_y00()
         self.t_range = np.arange(0,self.t_res*self.t_steps,self.t_res)
         self.soundwave = np.zeros(self.t_steps,dtype = np.float32)
         # print("len(self.t_range) is: " + str(len(self.t_range)))
@@ -218,11 +234,12 @@ class bow:
 # We will create a few digital guitar and bass strings:
 
 t_global    = 0.1
-c_global    = 12
+c_global    = 20
 
-pluck_height_global = 0.005 # m
+pluck_height_global = 0.01 # m
 
-T_guitar    = 100   # N
+
+T_guitar    = 120   # N
 L_guitar    = 0.640 # m
 L_bass      = 0.860 # m
 mu_guitar   = 0.001 # kg/m
@@ -230,6 +247,9 @@ mu_bass     = 0.016 # kg/m
 
 xlimlow  = 10
 xlimhigh = 22050
+ylimlow  = 0.00001
+ylimhigh = pluck_height_global
+
 
 # Relationships to show:
 
@@ -261,11 +281,11 @@ ax1.plot(Test_1_String2.frequencyRange,Test_1_String2.transform)
 ax1.plot(Test_1_String3.frequencyRange,Test_1_String3.transform)
 ax1.plot(Test_1_String4.frequencyRange,Test_1_String4.transform)
 ax1.set_xlim(xlimlow,xlimhigh)
-ax1.set_ylim(0.00000001,pluck_height_global)
+ax1.set_ylim(ylimlow,ylimhigh)
 ax1.set_yscale('log')
 ax1.set_xscale('log')
 plt.title(str("Test 1 - Relationship between tension and frequency"))
-ax1.legend(('String1', 'String2', 'String3', 'String4'),loc = 'right')
+ax1.legend(('String1 - ' + str(round(Test_1_String1.fund,2)) + ' Hz', 'String2 - ' + str(round(Test_1_String2.fund,2)) + ' Hz', 'String3 - ' + str(round(Test_1_String3.fund,2)) + ' Hz', 'String4 - ' + str(round(Test_1_String4.fund,2)) + ' Hz'),loc = 'right')
 plt.savefig(str("Test1.png"), bbox_inches='tight')
 plt.close()
 gc.collect()
@@ -326,12 +346,12 @@ gc.collect()
 # gc.collect()
 
 
-# TEST 4 - SHOW RELATIONSHIP BETWEEN HARMONICS AND PICKUP LOCATION
+# TEST 4 - SHOW HARMONIC AMPLITUDE CHANGES WITH PLUCK LOCATION
 
-Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 20, 0, t_global, c_global)
-Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 30, 0, t_global, c_global)
-Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 40, 0, t_global, c_global)
-Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
+Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
+Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
+Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 40, L_guitar, 50, 0, t_global, c_global)
+Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 
 Test_4_String1.plot_all()
 Test_4_String2.plot_all()
@@ -339,36 +359,42 @@ Test_4_String3.plot_all()
 Test_4_String4.plot_all()
 
 fig4 = plt.figure()
-plt.title(str("Test 4 - Relationship between harmonics and pickup location"))
+plt.title(str("Test 4 - Relationship between harmonics and pluck location"))
 plt.axis('off')
 
 ax41 = fig4.add_subplot(4,1,1)
 ax41.plot(Test_4_String1.frequencyRange,Test_4_String1.transform)
 ax41.set_xlim(xlimlow,xlimhigh)
-ax41.set_ylim(0.00000001,pluck_height_global)
+ax41.set_ylim(ylimlow,ylimhigh)
 ax41.set_xscale('log')
 ax41.set_yscale('log')
+ax41.legend(('String1 - ' + str(round(Test_4_String1.fund,2))))
 
 ax42 = fig4.add_subplot(4,1,2)
 ax42.plot(Test_4_String2.frequencyRange,Test_4_String2.transform)
 ax42.set_xlim(xlimlow,xlimhigh)
-ax42.set_ylim(0.00000001,pluck_height_global)
+ax42.set_ylim(ylimlow,ylimhigh)
 ax42.set_xscale('log')
 ax42.set_yscale('log')
+ax42.legend(('String2 - ' + str(round(Test_4_String2.fund,2))))
+
 
 ax43 = fig4.add_subplot(4,1,3)
 ax43.plot(Test_4_String3.frequencyRange,Test_4_String3.transform)
 ax43.set_xlim(xlimlow,xlimhigh)
-ax43.set_ylim(0.00000001,pluck_height_global)
+ax43.set_ylim(ylimlow,ylimhigh)
 ax43.set_xscale('log')
 ax43.set_yscale('log')
+ax43.legend(('String3 - ' + str(round(Test_4_String3.fund,2))))
+
 
 ax44 = fig4.add_subplot(4,1,4)
 ax44.plot(Test_4_String4.frequencyRange,Test_4_String4.transform)
 ax44.set_xlim(xlimlow,xlimhigh)
-ax44.set_ylim(0.00000001,pluck_height_global)
+ax44.set_ylim(ylimlow,ylimhigh)
 ax44.set_xscale('log')
 ax44.set_yscale('log')
+ax44.legend(('String4 - ' + str(round(Test_4_String4.fund,2))))
 
 fig4.set_figheight(10)
 fig4.set_figwidth(10)
