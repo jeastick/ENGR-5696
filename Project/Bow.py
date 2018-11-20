@@ -82,7 +82,7 @@ class bow:
 
         self.ux, self.ut = np.meshgrid(self.space,self.time)
 
-        # self.realyxt = self.yxt_exact(self.ux,self.ut,self.coefs)
+        self.realyxt = self.yxt_exact(self.ux,self.ut,self.coefs)
 
 
         self.generateWav()
@@ -149,14 +149,14 @@ class bow:
     def plot_wires_waves(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 0, cstride=100)
+        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 0, cstride=25)
         plt.show()
 
 
     def plot_wires_string(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 100, cstride=0)
+        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 25, cstride=0)
         plt.show()
 
     def plot_fft(self):
@@ -251,7 +251,7 @@ class bow:
 
 # We will create a few digital guitar and bass strings:
 
-t_global    = 0.1
+t_global    = 0.01
 c_global    = 30
 
 pluck_height_global = 0.05 # m
@@ -278,7 +278,7 @@ ylimhigh = pluck_height_global
 
 
 
-# TEST 1 - SHOW RELATIONSHIP BETWEEN TENSION AND FREQUENCY
+# # TEST 1 - SHOW RELATIONSHIP BETWEEN TENSION AND FREQUENCY
 
 Test_1_String1 = bow("Test_1_String1", T_guitar    , mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 Test_1_String2 = bow("Test_1_String2", T_guitar*1.2, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
@@ -301,7 +301,7 @@ plt.savefig(str("Test1.png"), bbox_inches='tight')
 plt.close()
 gc.collect()
 
-# # TEST 2 - SHOW RELATIONSHIP BETWEEN DENSITY AND FREQUENCY
+# # # TEST 2 - SHOW RELATIONSHIP BETWEEN DENSITY AND FREQUENCY
 
 Test_2_String1 = bow("Test_2_String1", T_guitar, mu_guitar    , pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 Test_2_String2 = bow("Test_2_String2", T_guitar, mu_guitar*1.2, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
@@ -324,7 +324,7 @@ plt.close()
 gc.collect()
 
 
-# # TEST 3 - SHOW RELATIONSHIP BETWEEN LENGTH AND FREQUENCY
+# # # TEST 3 - SHOW RELATIONSHIP BETWEEN LENGTH AND FREQUENCY
 
 Test_3_String1 = bow("Test_3_String1", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar    , 50, 0, t_global, c_global)
 Test_3_String2 = bow("Test_3_String2", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar*1.2, 50, 0, t_global, c_global)
@@ -350,9 +350,9 @@ gc.collect()
 # # TEST 4 - SHOW HARMONIC AMPLITUDE CHANGES WITH PLUCK LOCATION
 
 Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 10, L_guitar, 50, 0, t_global, c_global)
-Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 15, L_guitar, 50, 0, t_global, c_global)
-Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
-Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 25, L_guitar, 50, 0, t_global, c_global)
+Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
+Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
+Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 40, L_guitar, 50, 0, t_global, c_global)
 
 fig4 = plt.figure()
 plt.title(str("Test 4 - Relationship between harmonic content and pluck location"))
