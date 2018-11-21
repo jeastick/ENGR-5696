@@ -105,7 +105,9 @@ class bow:
         print("")
 
     def generateWav(self):
-        self.wavetime    = np.linspace(0, 1, 44100)
+        length = 10
+
+        self.wavetime    = np.linspace(0, length, length*44100)
         self.wave = self.yxt_exact(self.pup,self.wavetime,self.coefs)*self.amp
         self.wave = self.wave.astype(np.float32)
         scipy.io.wavfile.write(str(self.name) + ".wav", 44100, self.wave)
@@ -470,6 +472,27 @@ ylimhigh = pluck_height_global
 # Test_5_String0.plot_wires_string()
 # Test_5_String4.plot_wires_waves()
 # Test_5_String4.plot_wires_string()
+
+
+
+pick = 25
+pickup = 30
+samplelength = 10
+
+fret0  = bow("fret0" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 0,  t_global, c_global)
+fret1  = bow("fret1" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 1,  t_global, c_global)
+fret2  = bow("fret2" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 2,  t_global, c_global)
+fret3  = bow("fret3" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 3,  t_global, c_global)
+fret4  = bow("fret4" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 4,  t_global, c_global)
+fret5  = bow("fret5" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 5,  t_global, c_global)
+fret6  = bow("fret6" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 6,  t_global, c_global)
+fret7  = bow("fret7" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 7,  t_global, c_global)
+fret8  = bow("fret8" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 8,  t_global, c_global)
+fret9  = bow("fret9" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 9,  t_global, c_global)
+fret10 = bow("fret10", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 10, t_global, c_global)
+fret11 = bow("fret11", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 11, t_global, c_global)
+fret12 = bow("fret12", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 12, t_global, c_global)
+
 
 
 
