@@ -44,7 +44,7 @@ class bow:
         
         self.name = name
         print("-----------------START " + self.name + "---------------------")
-        print(self.name + ": Initializing")
+        print("Initializing + " + self.name)
         self.T = Tension                            # Tension of material (Newtons)
         self.mu = LinDens                           # Linear Density of material (kg/m)
         self.yp = PluckHeight                       # Height of "pluck" from neutral axis (m)
@@ -52,12 +52,12 @@ class bow:
         self.L = StringLength*(1-1/17.817)**self.fret                      # Period (string length) (m)
         self.xp = PluckLocation/100*StringLength          # Location of "pluck" along string (m)
         self.coefs = Coefficients
-        self.amp = 1                                # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
+        self.amp = 5                                # Amplification factor used on the guitar pick-up signal to increase amplitude of sound wave
 
         self.v = (self.T/self.mu)**(0.5)
         self.l = self.L/2                           # Half Period (m)
         self.fund = self.v/(2*self.L)
-
+        self.wavelength = self.v/self.fund
         self.x_res = 500                            # Resolution of x
         self.pup = PickupLocation/100*StringLength        # Sound pickup location (m)
         self.pup_x_range_index = int(round(PickupLocation/100*self.x_res))
@@ -84,10 +84,12 @@ class bow:
 
         self.realyxt = self.yxt_exact(self.ux,self.ut,self.coefs)
 
+        print("Generating .wav file.")
 
         self.generateWav()
 
 
+        print("Generating FFT.")
 
         self.frequencyRange = np.fft.fftfreq(self.wave.shape[0], d = 1/44100)
         self.frequencyRange = self.frequencyRange[range(int((round(self.wave.shape[0]))/2))]
@@ -96,16 +98,15 @@ class bow:
 
 
 
-        
+        # print("Plotting graphs.")        
         # self.plot_all()
-
 
         print("-------------------END " + self.name + "---------------------")
         print("")
 
     def generateWav(self):
         self.wavetime    = np.linspace(0, 1, 44100)
-        self.wave = self.yxt_exact(self.pup,self.wavetime,self.coefs)
+        self.wave = self.yxt_exact(self.pup,self.wavetime,self.coefs)*self.amp
         self.wave = self.wave.astype(np.float32)
         scipy.io.wavfile.write(str(self.name) + ".wav", 44100, self.wave)
 
@@ -147,16 +148,19 @@ class bow:
         plt.close()
 
     def plot_wires_waves(self):
+
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 0, cstride=25)
+        plt.title(str(self.name + ": Sound waves at various pick-up points"))
+        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = self.f_res, cstride = int(self.x_res/5))
         plt.show()
 
 
     def plot_wires_string(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 25, cstride=0)
+        plt.title(str(self.name + ": String position y(x,t) at various times t"))
+        ax.plot_wireframe(self.ux, self.ut, self.realyxt,rstride = 150, cstride=0)
         plt.show()
 
     def plot_fft(self):
@@ -175,7 +179,7 @@ class bow:
 
 
 
-# legacy code that calculates Bn numerically
+# legacy code that calculates Bn numerically and is also ugly and may not work anymore:
     def generateBow(self):
 
         self.x_range = np.linspace(0,self.L,num=self.x_res+1)
@@ -252,7 +256,7 @@ class bow:
 # We will create a few digital guitar and bass strings:
 
 t_global    = 0.01
-c_global    = 30
+c_global    = 20
 
 pluck_height_global = 0.05 # m
 
@@ -295,10 +299,20 @@ ylimhigh = pluck_height_global
 # ax1.set_xlim(xlimlow,xlimhigh)
 # ax1.set_ylim(ylimlow,ylimhigh)
 # ax1.set_xscale('log')
+# plt.xlabel('Hz')
+# plt.ylabel('Amplitude')
 # plt.title(str("Test 1 - Relationship between tension and frequency"))
-# ax1.legend(('String1 - ' + str(round(Test_1_String1.fund,2)) + ' Hz', 'String2 - ' + str(round(Test_1_String2.fund,2)) + ' Hz', 'String3 - ' + str(round(Test_1_String3.fund,2)) + ' Hz', 'String4 - ' + str(round(Test_1_String4.fund,2)) + ' Hz'),loc = 'right')
-# plt.savefig(str("Test1.png"), bbox_inches='tight')
+# ax1.legend(('String1 - T = ' + str(Test_1_String1.T) + ' N, f = ' + str(round(Test_1_String1.fund,2)) + ' Hz', 
+#             'String2 - T = ' + str(Test_1_String2.T) + ' N, f = ' + str(round(Test_1_String2.fund,2)) + ' Hz',
+#             'String3 - T = ' + str(Test_1_String3.T) + ' N, f = ' + str(round(Test_1_String3.fund,2)) + ' Hz', 
+#             'String4 - T = ' + str(Test_1_String4.T) + ' N, f = ' + str(round(Test_1_String4.fund,2)) + ' Hz'),
+# loc = 'right')
+# plt.savefig(str("Test1_T_vs_freq.png"), bbox_inches='tight')
 # plt.close()
+# del Test_1_String1
+# del Test_1_String2
+# del Test_1_String3
+# del Test_1_String4
 # gc.collect()
 
 # # # # TEST 2 - SHOW RELATIONSHIP BETWEEN DENSITY AND FREQUENCY
@@ -317,10 +331,20 @@ ylimhigh = pluck_height_global
 # ax2.plot(Test_2_String4.frequencyRange,Test_2_String4.transform)
 # plt.xlim(xlimlow,xlimhigh)
 # ax2.set_xscale('log')
+# plt.xlabel('Hz')
+# plt.ylabel('Amplitude')
 # plt.title(str("Test 2 - Relationship between linear density and frequency"))
-# ax2.legend(('String1', 'String2', 'String3', 'String4'),loc = 'right')
-# plt.savefig(str("Test2.png"), bbox_inches='tight')
+# ax2.legend(('String1 - density = ' + str(Test_2_String1.mu) + ' kg/m, f = ' + str(round(Test_2_String1.fund,2)) + ' Hz', 
+#             'String2 - density = ' + str(Test_2_String2.mu) + ' kg/m, f = ' + str(round(Test_2_String2.fund,2)) + ' Hz', 
+#             'String3 - density = ' + str(Test_2_String3.mu) + ' kg/m, f = ' + str(round(Test_2_String3.fund,2)) + ' Hz', 
+#             'String4 - density = ' + str(Test_2_String4.mu) + ' kg/m, f = ' + str(round(Test_2_String4.fund,2)) + ' Hz'),loc = 'right')
+# plt.savefig(str("Test2_density_vs_freq.png"), bbox_inches='tight')
 # plt.close()
+
+# del Test_2_String1
+# del Test_2_String2
+# del Test_2_String3
+# del Test_2_String4
 # gc.collect()
 
 
@@ -340,22 +364,31 @@ ylimhigh = pluck_height_global
 # ax3.plot(Test_3_String4.frequencyRange,Test_3_String4.transform)
 # plt.xlim(xlimlow,xlimhigh)
 # ax3.set_xscale('log')
+# plt.xlabel('Hz')
+# plt.ylabel('Amplitude')
 # plt.title(str("Test 3 - Relationship between length and frequency"))
-# ax3.legend(('String1', 'String2', 'String3', 'String4'),loc = 'right')
-# plt.savefig(str("Test3.png"), bbox_inches='tight')
+# ax3.legend(('String1 - L = ' + str(round(Test_3_String1.L,3)) + ' m, f = ' + str(round(Test_3_String1.fund,2)) + ' Hz', 
+#             'String2 - L = ' + str(round(Test_3_String2.L,3)) + ' m, f = ' + str(round(Test_3_String2.fund,2)) + ' Hz', 
+#             'String3 - L = ' + str(round(Test_3_String3.L,3)) + ' m, f = ' + str(round(Test_3_String3.fund,2)) + ' Hz', 
+#             'String4 - L = ' + str(round(Test_3_String4.L,3)) + ' m, f = ' + str(round(Test_3_String4.fund,2)) + ' Hz'),loc = 'right')
+# plt.savefig(str("Test3_length_vs_freq.png"), bbox_inches='tight')
 # plt.close()
+
+# del Test_3_String1
+# del Test_3_String2
+# del Test_3_String3
+# del Test_3_String4
 # gc.collect()
 
 
-# # # TEST 4 - SHOW HARMONIC AMPLITUDE CHANGES WITH PLUCK LOCATION
+# # # TEST 4 - SHOW SOUNDWAVE AMPLITUDE AND HARMONIC CONTENT CHANGES WITH PICKUP LOCATION
 
-# Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 10, L_guitar, 50, 0, t_global, c_global)
-# Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
-# Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
-# Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 40, L_guitar, 50, 0, t_global, c_global)
+# Test_4_String1 = bow("Test_4_String1", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 20, 0, t_global, c_global)
+# Test_4_String2 = bow("Test_4_String2", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 30, 0, t_global, c_global)
+# Test_4_String3 = bow("Test_4_String3", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 40, 0, t_global, c_global)
+# Test_4_String4 = bow("Test_4_String4", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
 
 # fig4 = plt.figure()
-# plt.title(str("Test 4 - Relationship between harmonic content and pluck location"))
 # plt.axis('off')
 
 # ax41 = fig4.add_subplot(4,1,1)
@@ -363,14 +396,12 @@ ylimhigh = pluck_height_global
 # ax41.set_xlim(xlimlow,xlimhigh)
 # ax41.set_ylim(ylimlow,ylimhigh)
 # ax41.set_xscale('log')
-# ax41.legend(('String1 - ' + str(round(Test_4_String1.fund,2))),loc = 'right')
 
 # ax42 = fig4.add_subplot(4,1,2)
 # ax42.plot(Test_4_String2.frequencyRange,Test_4_String2.transform)
 # ax42.set_xlim(xlimlow,xlimhigh)
 # ax42.set_ylim(ylimlow,ylimhigh)
 # ax42.set_xscale('log')
-# ax42.legend(('String2 - ' + str(round(Test_4_String2.fund,2))),loc = 'right')
 
 
 # ax43 = fig4.add_subplot(4,1,3)
@@ -378,7 +409,6 @@ ylimhigh = pluck_height_global
 # ax43.set_xlim(xlimlow,xlimhigh)
 # ax43.set_ylim(ylimlow,ylimhigh)
 # ax43.set_xscale('log')
-# ax43.legend(('String3 - ' + str(round(Test_4_String3.fund,2))),loc = 'right')
 
 
 # ax44 = fig4.add_subplot(4,1,4)
@@ -387,62 +417,65 @@ ylimhigh = pluck_height_global
 # ax44.set_ylim(ylimlow,ylimhigh)
 # ax44.set_xscale('log')
 
-# ax44.legend(('String4 - ' + str(round(Test_4_String4.fund,2))),loc = 'right')
+# ax41.set_title(('Test 4, String1 - pup @ x = ' + str(round(Test_4_String1.pup,3)) + " m, L = " + str(round(Test_4_String1.L,3))))
+# ax42.set_title(('Test 4, String2 - pup @ x = ' + str(round(Test_4_String2.pup,3)) + " m, L = " + str(round(Test_4_String2.L,3))))
+# ax43.set_title(('Test 4, String3 - pup @ x = ' + str(round(Test_4_String3.pup,3)) + " m, L = " + str(round(Test_4_String3.L,3))))
+# ax44.set_title(('Test 4, String4 - pup @ x = ' + str(round(Test_4_String4.pup,3)) + " m, L = " + str(round(Test_4_String4.L,3))))
 
 # fig4.set_figheight(10)
 # fig4.set_figwidth(10)
-
-# plt.savefig(str("Test4.png"), bbox_inches='tight')
+# fig4.subplots_adjust(hspace = 0.5)
+# plt.savefig(str("Test4_pickup.png"), bbox_inches='tight')
 # plt.close()
+
+# del Test_4_String1
+# del Test_4_String2
+# del Test_4_String3
+# del Test_4_String4
 # gc.collect()
 
 
-
 # # TEST 5 - SHOW bn CHANGES WITH PLUCK LOCATION
-Test_5_String0 = bow("Test_5_String0", T_guitar, mu_guitar, pluck_height_global, 10, L_guitar, 50, 0, t_global, c_global)
-Test_5_String1 = bow("Test_5_String1", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
-Test_5_String2 = bow("Test_5_String2", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
-Test_5_String3 = bow("Test_5_String3", T_guitar, mu_guitar, pluck_height_global, 40, L_guitar, 50, 0, t_global, c_global)
-Test_5_String4 = bow("Test_5_String4", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
+# Test_5_String0 = bow("Test_5_String0", T_guitar, mu_guitar, pluck_height_global, 10, L_guitar, 50, 0, t_global, c_global)
+# Test_5_String1 = bow("Test_5_String1", T_guitar, mu_guitar, pluck_height_global, 20, L_guitar, 50, 0, t_global, c_global)
+# Test_5_String2 = bow("Test_5_String2", T_guitar, mu_guitar, pluck_height_global, 30, L_guitar, 50, 0, t_global, c_global)
+# Test_5_String3 = bow("Test_5_String3", T_guitar, mu_guitar, pluck_height_global, 40, L_guitar, 50, 0, t_global, c_global)
+# Test_5_String4 = bow("Test_5_String4", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 
-fig5, ax5 = plt.subplots()
-plt.title(str("Test 5 - Relationship between bn and pluck location"))
-# plt.axis('off')
-ax5.plot(Test_5_String0.bns)
-ax5.plot(Test_5_String1.bns)
-ax5.plot(Test_5_String2.bns)
-ax5.plot(Test_5_String3.bns)
-ax5.plot(Test_5_String4.bns)
-ax5.grid(True,which='both')
-plt.xticks(np.arange(0,c_global+1,1))
-# ax51.set_xlim(0,c_global+1)
-# ax51.set_ylim(ylimlow,ylimhigh)
-# ax51.legend(('String1 - ' + str(round(Test_5_String1.fund,2))),loc = 'right')
+# fig5, ax5 = plt.subplots()
+# plt.title(str("Test 5 - Relationship between bn and pluck location"))
+# plt.xlabel('n')
+# plt.ylabel('Fourier coefficient \'Bn\'')
+# # plt.axis('off')
+# ax5.plot(Test_5_String0.bns)
+# ax5.plot(Test_5_String1.bns)
+# ax5.plot(Test_5_String2.bns)
+# ax5.plot(Test_5_String3.bns)
+# ax5.plot(Test_5_String4.bns)
+# ax5.grid(True,which='both')
+# plt.xticks(np.arange(1,c_global,1))
+# ax5.legend(('String0 - pluck @ x = ' + str(round(Test_5_String0.xp,3)) + ' m', 
+#             'String1 - pluck @ x = ' + str(round(Test_5_String1.xp,3)) + ' m', 
+#             'String2 - pluck @ x = ' + str(round(Test_5_String2.xp,3)) + ' m', 
+#             'String3 - pluck @ x = ' + str(round(Test_5_String3.xp,3)) + ' m', 
+#             'String4 - pluck @ x = ' + str(round(Test_5_String4.xp,3)) + ' m'),loc = 'right')
 
-# ax52 = fig5.add_subplot(4,1,2)
+# fig5.set_figheight(10)
+# fig5.set_figwidth(10)
 
-# # ax52.set_xlim(0,c_global+1)
-# # ax52.set_ylim(ylimlow,ylimhigh)
-# ax52.legend(('String2 - ' + str(round(Test_5_String2.fund,2))),loc = 'right')
+# plt.savefig(str("Test5_bn_vs_xp.png"), bbox_inches='tight')
+# plt.close()
 
-
-# ax53 = fig5.add_subplot(4,1,3)
-
-# # ax53.set_xlim(0,c_global+1)
-# # ax53.set_ylim(ylimlow,ylimhigh)
-# ax53.legend(('String3 - ' + str(round(Test_5_String3.fund,2))),loc = 'right')
+# Test_5_String0.plot_wires_waves()
+# Test_5_String0.plot_wires_string()
+# Test_5_String4.plot_wires_waves()
+# Test_5_String4.plot_wires_string()
 
 
-# ax54 = fig5.add_subplot(4,1,4)
 
-# # ax54.set_xlim(0,c_global+1)
-# # ax54.set_ylim(ylimlow,ylimhigh)
-
-# ax54.legend(('String4 - ' + str(round(Test_5_String4.fund,2))),loc = 'right')
-
-fig5.set_figheight(10)
-fig5.set_figwidth(10)
-
-plt.savefig(str("Test5.png"), bbox_inches='tight')
-plt.close()
-gc.collect()
+# del Test_5_String0
+# del Test_5_String1
+# del Test_5_String2
+# del Test_5_String3
+# del Test_5_String4
+# gc.collect()
