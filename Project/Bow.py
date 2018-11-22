@@ -1,9 +1,9 @@
-# ======================================
-# =        ENGR-5696 PROJECT           =
-# =                                    =
-# =         JEFF EASTICK               =
-# =         FALL 2018                  =
-# ======================================
+#=================================#
+#       ENGR-5696 PROJECT         #
+#                                 #
+#         JEFF EASTICK            #
+#          FALL 2018              #
+#=================================#
 
 import numpy as np
 import math as m
@@ -258,9 +258,9 @@ class bow:
 # We will create a few digital guitar and bass strings:
 
 t_global    = 0.01
-c_global    = 20
+c_global    = 6
 
-pluck_height_global = 0.05 # m
+pluck_height_global = 0.1 # m
 
 
 T_guitar    = 120   # N
@@ -475,23 +475,38 @@ ylimhigh = pluck_height_global
 
 
 
-pick = 25
-pickup = 30
+hammer = 35
+pickup = 35
 samplelength = 10
 
-fret0  = bow("fret0" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 0,  t_global, c_global)
-fret1  = bow("fret1" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 1,  t_global, c_global)
-fret2  = bow("fret2" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 2,  t_global, c_global)
-fret3  = bow("fret3" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 3,  t_global, c_global)
-fret4  = bow("fret4" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 4,  t_global, c_global)
-fret5  = bow("fret5" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 5,  t_global, c_global)
-fret6  = bow("fret6" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 6,  t_global, c_global)
-fret7  = bow("fret7" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 7,  t_global, c_global)
-fret8  = bow("fret8" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 8,  t_global, c_global)
-fret9  = bow("fret9" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 9,  t_global, c_global)
-fret10 = bow("fret10", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 10, t_global, c_global)
-fret11 = bow("fret11", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 11, t_global, c_global)
-fret12 = bow("fret12", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 12, t_global, c_global)
+for string in range (88):
+    string+=1
+    f = ((2**(1/12))**(string-49)*440)
+    print("Key number " + str(string) + " frequency is " + str(f))
+    l = 1/(2*f)*(T_guitar/mu_guitar)**0.5
+    print("String length is: " + str(l))
+    play = bow("string_"+str(string), T_guitar, mu_guitar, pluck_height_global, hammer, 1/(2*f)*(T_guitar/mu_guitar)**0.5, pickup, 0, t_global, c_global)
+
+
+
+# for string in range(5):
+#     for fret in range(5):
+#         play = bow("string_"+str(string)+"_fret_"+str(fret), T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, fret,  t_global, c_global)
+
+
+# fret0  = bow("fret0" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 0,  t_global, c_global)
+# fret1  = bow("fret1" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 1,  t_global, c_global)
+# fret2  = bow("fret2" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 2,  t_global, c_global)
+# fret3  = bow("fret3" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 3,  t_global, c_global)
+# fret4  = bow("fret4" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 4,  t_global, c_global)
+# fret5  = bow("fret5" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 5,  t_global, c_global)
+# fret6  = bow("fret6" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 6,  t_global, c_global)
+# fret7  = bow("fret7" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 7,  t_global, c_global)
+# fret8  = bow("fret8" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 8,  t_global, c_global)
+# fret9  = bow("fret9" , T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 9,  t_global, c_global)
+# fret10 = bow("fret10", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 10, t_global, c_global)
+# fret11 = bow("fret11", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 11, t_global, c_global)
+# fret12 = bow("fret12", T_guitar, mu_guitar, pluck_height_global, pick, L_guitar, pickup, 12, t_global, c_global)
 
 
 
