@@ -521,7 +521,7 @@ for string in range (88):
 
 
 # Diddley bow sound generator demo - generates sample set for single-string instrument with 12 frets. 
-for fret in range (12):
+for fret in range (13):
     f = 440 #Hz
     play = bow("fret_"+str(fret), mu_guitar*(2*L_guitar*f)**2, mu_guitar, pluck_height_global, hammer, L_guitar, pickup, fret, t_global, c_global)
 
