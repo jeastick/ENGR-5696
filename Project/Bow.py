@@ -264,7 +264,7 @@ class bow:
 # We will create a few digital guitar and bass strings:
 
 t_global    = 0.01
-c_global    = 6
+c_global    = 10
 
 pluck_height_global = 0.1 # m
 
@@ -280,7 +280,7 @@ xlimhigh = 22050
 ylimlow  = 0.00001
 ylimhigh = pluck_height_global
 
-
+fs = 'large'
 # Relationships to show:
 
 # 1. Tension and frequency
@@ -308,14 +308,14 @@ ax1.plot(Test_1_String4.frequencyRange,Test_1_String4.transform)
 ax1.set_xlim(xlimlow,xlimhigh)
 ax1.set_ylim(ylimlow,ylimhigh)
 ax1.set_xscale('log')
-plt.xlabel('Hz')
-plt.ylabel('Amplitude')
-plt.title(str("Test 1 - Relationship between tension and frequency"))
+plt.xlabel('Hz', fontsize = fs)
+plt.ylabel('Amplitude', fontsize = fs)
+plt.title(str("Test 1 - Relationship between tension and frequency"), fontsize = fs)
 ax1.legend(('String1 - T = ' + str(Test_1_String1.T) + ' N, f = ' + str(round(Test_1_String1.fund,2)) + ' Hz', 
             'String2 - T = ' + str(Test_1_String2.T) + ' N, f = ' + str(round(Test_1_String2.fund,2)) + ' Hz',
             'String3 - T = ' + str(Test_1_String3.T) + ' N, f = ' + str(round(Test_1_String3.fund,2)) + ' Hz', 
             'String4 - T = ' + str(Test_1_String4.T) + ' N, f = ' + str(round(Test_1_String4.fund,2)) + ' Hz'),
-loc = 'right')
+loc = 'right', fontsize = fs)
 plt.savefig(str("Test1_T_vs_freq.png"), bbox_inches='tight')
 plt.close()
 del Test_1_String1
@@ -340,13 +340,13 @@ ax2.plot(Test_2_String3.frequencyRange,Test_2_String3.transform)
 ax2.plot(Test_2_String4.frequencyRange,Test_2_String4.transform)
 plt.xlim(xlimlow,xlimhigh)
 ax2.set_xscale('log')
-plt.xlabel('Hz')
-plt.ylabel('Amplitude')
-plt.title(str("Test 2 - Relationship between linear density and frequency"))
+plt.xlabel('Hz', fontsize = fs)
+plt.ylabel('Amplitude', fontsize = fs)
+plt.title(str("Test 2 - Relationship between linear density and frequency"), fontsize = fs)
 ax2.legend(('String1 - density = ' + str(Test_2_String1.mu) + ' kg/m, f = ' + str(round(Test_2_String1.fund,2)) + ' Hz', 
             'String2 - density = ' + str(Test_2_String2.mu) + ' kg/m, f = ' + str(round(Test_2_String2.fund,2)) + ' Hz', 
             'String3 - density = ' + str(Test_2_String3.mu) + ' kg/m, f = ' + str(round(Test_2_String3.fund,2)) + ' Hz', 
-            'String4 - density = ' + str(Test_2_String4.mu) + ' kg/m, f = ' + str(round(Test_2_String4.fund,2)) + ' Hz'),loc = 'right')
+            'String4 - density = ' + str(Test_2_String4.mu) + ' kg/m, f = ' + str(round(Test_2_String4.fund,2)) + ' Hz'),loc = 'right', fontsize = fs)
 plt.savefig(str("Test2_density_vs_freq.png"), bbox_inches='tight')
 plt.close()
 
@@ -373,13 +373,13 @@ ax3.plot(Test_3_String3.frequencyRange,Test_3_String3.transform)
 ax3.plot(Test_3_String4.frequencyRange,Test_3_String4.transform)
 plt.xlim(xlimlow,xlimhigh)
 ax3.set_xscale('log')
-plt.xlabel('Hz')
-plt.ylabel('Amplitude')
-plt.title(str("Test 3 - Relationship between length and frequency"))
+plt.xlabel('Hz', fontsize = fs)
+plt.ylabel('Amplitude', fontsize = fs)
+plt.title(str("Test 3 - Relationship between length and frequency"), fontsize = fs)
 ax3.legend(('String1 - L = ' + str(round(Test_3_String1.L,3)) + ' m, f = ' + str(round(Test_3_String1.fund,2)) + ' Hz', 
             'String2 - L = ' + str(round(Test_3_String2.L,3)) + ' m, f = ' + str(round(Test_3_String2.fund,2)) + ' Hz', 
             'String3 - L = ' + str(round(Test_3_String3.L,3)) + ' m, f = ' + str(round(Test_3_String3.fund,2)) + ' Hz', 
-            'String4 - L = ' + str(round(Test_3_String4.L,3)) + ' m, f = ' + str(round(Test_3_String4.fund,2)) + ' Hz'),loc = 'right')
+            'String4 - L = ' + str(round(Test_3_String4.L,3)) + ' m, f = ' + str(round(Test_3_String4.fund,2)) + ' Hz'),loc = 'right', fontsize = fs)
 plt.savefig(str("Test3_length_vs_freq.png"), bbox_inches='tight')
 plt.close()
 
@@ -426,10 +426,10 @@ ax44.set_xlim(xlimlow,xlimhigh)
 ax44.set_ylim(ylimlow,ylimhigh)
 ax44.set_xscale('log')
 
-ax41.set_title(('Test 4, String1 - pup @ x = ' + str(round(Test_4_String1.pup,3)) + " m, L = " + str(round(Test_4_String1.L,3))))
-ax42.set_title(('Test 4, String2 - pup @ x = ' + str(round(Test_4_String2.pup,3)) + " m, L = " + str(round(Test_4_String2.L,3))))
-ax43.set_title(('Test 4, String3 - pup @ x = ' + str(round(Test_4_String3.pup,3)) + " m, L = " + str(round(Test_4_String3.L,3))))
-ax44.set_title(('Test 4, String4 - pup @ x = ' + str(round(Test_4_String4.pup,3)) + " m, L = " + str(round(Test_4_String4.L,3))))
+ax41.set_title(('Test 4, String1 - pup @ x = ' + str(round(Test_4_String1.pup,3)) + " m, L = " + str(round(Test_4_String1.L,3))), fontsize = fs)
+ax42.set_title(('Test 4, String2 - pup @ x = ' + str(round(Test_4_String2.pup,3)) + " m, L = " + str(round(Test_4_String2.L,3))), fontsize = fs)
+ax43.set_title(('Test 4, String3 - pup @ x = ' + str(round(Test_4_String3.pup,3)) + " m, L = " + str(round(Test_4_String3.L,3))), fontsize = fs)
+ax44.set_title(('Test 4, String4 - pup @ x = ' + str(round(Test_4_String4.pup,3)) + " m, L = " + str(round(Test_4_String4.L,3))), fontsize = fs)
 
 fig4.set_figheight(10)
 fig4.set_figwidth(10)
@@ -452,9 +452,9 @@ Test_5_String3 = bow("Test_5_String3", T_guitar, mu_guitar, pluck_height_global,
 Test_5_String4 = bow("Test_5_String4", T_guitar, mu_guitar, pluck_height_global, 50, L_guitar, 50, 0, t_global, c_global)
 
 fig5, ax5 = plt.subplots()
-plt.title(str("Test 5 - Relationship between bn and pluck location"))
-plt.xlabel('n')
-plt.ylabel('Fourier coefficient \'Bn\'')
+plt.title(str("Test 5 - Relationship between bn and pluck location"), fontsize = fs)
+plt.xlabel('n', fontsize = fs)
+plt.ylabel('Fourier coefficient \'Bn\'', fontsize = fs)
 # plt.axis('off')
 ax5.plot(Test_5_String0.bns)
 ax5.plot(Test_5_String1.bns)
@@ -467,7 +467,7 @@ ax5.legend(('String0 - pluck @ x = ' + str(round(Test_5_String0.xp,3)) + ' m',
             'String1 - pluck @ x = ' + str(round(Test_5_String1.xp,3)) + ' m', 
             'String2 - pluck @ x = ' + str(round(Test_5_String2.xp,3)) + ' m', 
             'String3 - pluck @ x = ' + str(round(Test_5_String3.xp,3)) + ' m', 
-            'String4 - pluck @ x = ' + str(round(Test_5_String4.xp,3)) + ' m'),loc = 'right')
+            'String4 - pluck @ x = ' + str(round(Test_5_String4.xp,3)) + ' m'),loc = 'right', fontsize = fs)
 
 fig5.set_figheight(10)
 fig5.set_figwidth(10)

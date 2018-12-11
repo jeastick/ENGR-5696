@@ -201,9 +201,15 @@ y(x,t) =(c_1 cos(kx) + c_2sin(kx))\\(c_3 cos(kvt) + c_4sin(kvt))
 
 \subsection{\label{sec:level1}Boundary Conditions and Fourier Series Solution}
 
-The first boundary condition to consider is $y(0,t)=y(\ell,t)=0$. This represents the two fixed points at each end of the string. The second boundary condition to consider is the string's $y$ velocity $y'(x,0)=y'(x,0)=0.$\\
+The first boundary condition to consider is $y(0,t)=y(\ell,t)=0$. This represents the two fixed points at each end of the string. The second condition to consider is the string's initial $y$ velocity $y'(x,0)=y'(x,0)=0.$\\
 
-The final boundary condition required to solve is the shape of the "pluck" of the string at rest at $t=0$ as shown in Figure YYY. This "pluck" can be described by a function $y(x,0)$, where we can note that $y(0,0)=y(\ell,0)=0$ :
+The final condition required to solve is the initial shape of the "pluck" of the string at rest at $t=0$ as shown in Figure (\ref{boundary}). This "pluck" can be described by a function $y(x,0)$, where we can note that $y(0,0)=y(\ell,0)=0$ :
+
+\begin{figure}[h]
+\caption{Initial Condition}
+\includegraphics[width=\columnwidth]{boundary.png}
+\label{boundary}
+\end{figure}
 
 \begin{align} \label{y0}
 y(x,0) =  
@@ -297,20 +303,16 @@ f = \frac{1}{2\ell} \sqrt{\frac{T}{\mu}}
 \label{Test3}
 \end{figure}
 
-Figures \ref{Test1}, \ref{Test2}, and \ref{Test3} show three frequency spectrums of the same "string" with various parameters being changed, and their resulting frequency response. Test 1 demonstrates that increasing the tension of the string will increase the frequency. Test 2 demonstrates that increasing the linear density will decrease the frequency. Test 3 demonstrates that increasing the string length will decrease the frequency. All these relationships are obvious with (\ref{duh}).\\
+Figures \ref{Test1}, \ref{Test2}, and \ref{Test3} show three frequency spectrums of the same "string" with various parameters being changed, and their resulting frequency response. Test 1 demonstrates that increasing the tension of the string will increase the frequency. Test 2 demonstrates that increasing the linear density will decrease the frequency. Test 3 demonstrates that increasing the string length will decrease the frequency. All these relationships are straightforward when considering (\ref{duh}).\\
 
-The physical variables used to define the string are $\ell = 0.640$ m, $T = 120$ N, $\mu = 0.001$ kg/m. 
+The physical properties used to define the string are $\ell = 0.640$ m, $T = 120$ N, $\mu = 0.001$ kg/m. 
 
 
 
 
 
 \subsection{\label{sec:level1}Sound Pick-up Location}
-\begin{figure}[h]
-\caption{Test 4}
-\fbox{\includegraphics[width=\columnwidth]{Test4_pickup.png}}
-\label{Test4}
-\end{figure}
+
 Changing the sound pick-up location $x_pup$ changes the frequency response of the sound wave as well. This is analagous to how an electric guitar may have two or three electromagnetic pick-ups, located in different places on the body of the guitar along the strings. Typically the bridge pick-up near the end of the strings has more "treble" (higher frequencies) and the neck pick-up closer to the center point of the strings has more "bass" (lower frequencies). This relationship was investigated using the solution of $y(x,t)$.\\
 
 When $x = x_{pup}$, the $sin$ term in (\ref{yxtfinal}) becomes dependent only on integer variable $n$. Therefore by changing where the sound pick-up "listens" to the string, the fourier coefficients $b_n$ are then multiplied by this new constant term, and therefore affects the frequencies present in the sound wave. \\
@@ -319,7 +321,11 @@ Changing the location of $x_{pup}$ between $ 0 < x_{pup} <\ell$ changes the valu
 
 The four frequency response spectrums shown in Figure \ref{Test4} show how the harmonics present in a wave can change depending where the sound pick-up is. It is evident that when $x = x_{pup} = \frac{\ell}{2}$ the fewest upper harmonics are present.
  
-
+\begin{figure}[h]
+\caption{Test 4}
+\fbox{\includegraphics[width=\columnwidth]{Test4_pickup.png}}
+\label{Test4}
+\end{figure}
 
 \subsection{\label{sec:level1}Sound Pluck Location}
 
@@ -331,7 +337,7 @@ In a similar fashion to changing the sound pick-up location, changing the pluck 
 \end{figure}
 When $x = x_{pup}= $ constant, it can be seen that the constant term of (\ref{yxtfinal}) is dependent only on $x_p$. Similarly to the sound pick-up location discussed above, the $sin$ term in $b_n$becomes $sin(\frac{n \pi}{2})$ when  $x_{p} = \frac{\ell}{2}$, and half of all series expansion terms are eliminated.
 
-For values of $x_p/\ell \neq 1/2$, all series expansion terms are present. As $x_p/\ell$ strays futher from the midpoint and approaches 0 or 1, the harmonic content (comparatively, Fourier coefficients $b_n$) increase. This is shown in Figure \ref{Test5} for the first five $n$.
+For values of $x_p/\ell \neq 1/2$, all series expansion terms are present. As $x_p/\ell$ strays futher from the midpoint and approaches 0 or 1, the harmonic content (comparatively, Fourier coefficients $b_n$) increase. This is shown in Figure \ref{Test5} for the first nine $n$.
 
 
 
